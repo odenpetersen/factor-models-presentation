@@ -1,0 +1,90 @@
+\documentclass{beamer}
+
+% Theme choice (you can change to Madrid, CambridgeUS, etc.)
+\usetheme{Madrid}
+
+% Optional packages
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % for including images
+\usepackage{amsmath, amssymb} % for math symbols
+\usepackage{hyperref} % for clickable links
+
+% Title info
+\title[Short Title]{Factor Models of Returns}
+\author[Your Name]{Oden Petersen}
+\date{\today}
+
+\begin{document}
+
+% Title page
+\begin{frame}
+	\titlepage
+\end{frame}
+
+% Table of contents
+\begin{frame}{Outline}
+	\tableofcontents
+	%% Good to include concrete data examples throughout
+	% Basics
+		% What is a security
+		% What is a portfolio
+		% Returns = dot product of weights and 
+		% Risk = variance
+	% Portolio Optim
+		% Markowitz frontier
+		% Security market line -> Sharpe
+		% Markowitz solution
+			% Estimation difficulties
+	% CAPM -> index ETFs. Why ASX200 and not all ords (microstructure)
+	% Overrepresentation -> equal weighting
+	% Fama French
+	% Factor models approximate cov matrix
+	% Fama macbeth
+	% Regularisation
+	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
+	% Factor models in options pricing
+		% Diagnosing issues with the model eg because black scholes is wrong ("all models are wrong")
+\end{frame}
+
+% Section 1
+\section{Introduction}
+\begin{frame}{Introduction}
+	\begin{itemize}
+		\item First point
+		\item Second point
+		\item Third point
+	\end{itemize}
+\end{frame}
+
+% Section 2
+\section{Main Content}
+\begin{frame}{Some Math}
+	Here is an equation:
+	\[
+		E = mc^2
+	\]
+\end{frame}
+
+\begin{frame}{An Image}
+	\begin{figure}
+		\includegraphics[width=0.7\linewidth]{example-image}
+		\caption{A sample image}
+	\end{figure}
+\end{frame}
+
+% Section 3
+\section{Conclusion}
+\begin{frame}{Conclusion}
+	\begin{itemize}
+		\item Recap the main ideas
+		\item Thank the audience
+	\end{itemize}
+\end{frame}
+
+% Final thank-you slide
+\begin{frame}
+	\centering
+	\Huge{Thank you!}
+\end{frame}
+
+\end{document}
