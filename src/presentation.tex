@@ -32,6 +32,9 @@
 % Title page
 \begin{frame}
 	\titlepage
+	\begin{center}
+		\textit{``$y=X\beta+\epsilon$, the rest is commentary.''}
+	\end{center}
 \end{frame}
 
 \begin{frame}{About Me}
@@ -47,6 +50,8 @@
 \section{Securities Markets}
 
 \begin{frame}{Spot Transactions}
+	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.
+
 	If I give you $q$ units of some asset $A$, and you give me $\$p$, then:
 	\begin{itemize}
 		\item I have \textbf{sold} $q$ units of $A$ to you at $\frac{\$p}{q}$
@@ -55,19 +60,21 @@
 
 	Buying and selling are collectively called `trading'.
 
+	Suppose I own some amount of $A$ and some amount of money. If we let $s$ be $+1$ for buying and $-1$ for selling, then the result of any trade is to add $qs$ to the amount of $A$ I own, and add $-qps$ to the amount of money I have. %s is called the sign of the trade
+
 	% Stock image of retail store
 \end{frame}
 
 \begin{frame}{Securities Markets and Exchanges}
 	The \textbf{\textcolor{blue}{market}} is the collective activity of all traders. When we don't care who we trade with, we can just `trade with the market'.
 
-	A \textbf{\textcolor{red}{securities} \textcolor{blue}{market}} for some asset $A$, open at a time $t$, is any \textcolor{red}{standardised} \textcolor{blue}{way for traders to reach agreements to buy or sell} $A$ at a specified \textbf{settlement time} $T\geq t$.
+	A \textbf{\textcolor{red}{securities} \textcolor{blue}{market}} for some asset $A$, open at a time $t$, is any \textcolor{red}{standardised} \textcolor{blue}{way for traders to reach agreements to buy or sell} $A$ at a specified \textbf{settlement time} $T\geq t$. %"securities" because of standardisation and regulation
 
 	\pause
 
 	For example, $T=\ldots$
 	\begin{itemize}
-		\item $t$ (`spot', e.g. blockchain)
+		\item $t$ (`spot', e.g. blockchain) %ASX tried to do blockchain, this was scrapped in 2022 after 7yrs
 		\item $t+1, t+2, \ldots$ (`clearing', e.g. equities)
 		\item Last Thursday of month (`futures')
 	\end{itemize}
@@ -81,7 +88,7 @@
 \end{frame}
 
 \begin{frame}{Settlement and Clearing}
-	A \textbf{securities exchange} is a centralised venue serving a securities market for \textbf{exchange participants} (e.g. ASX, NYSE, TSE, HKEX, LME).
+	A \textbf{securities exchange} is a centralised venue serving a securities market for \textbf{exchange participants} (e.g. ASX, NYSE, TSE, HKEX, LME). %Explain the terms "OTC", off-exchange.
 
 	\begin{columns}[t]
 		\begin{column}{0.48\textwidth}
@@ -135,34 +142,100 @@
 		\item A \textbf{market} is whatever you use to trade
 		\item A \textbf{securities market} is a standardised way to agree to trades
 		\item Agreements consist of \textbf{rights} and \textbf{obligations}
-		\item A \textbf{securities exchange} is a centralised trading venue
+		\item A \textbf{securities exchange} is a centralised trading venue %Maybe explain national market system
 		\item After trades are agreed to, they will be \textbf{settled} in some standardised way
 		\item Traders may be obligated to post assets ('locate') or money ('margin')
 	\end{enumerate}
 \end{frame}
 
 \section{Trading}
-\begin{frame}{Trade Formation}
-	% Order books
-	% aggressive vs passive (taking/making)
-	% Latency
-\end{frame}
+\begin{frame}{Profitability}
+	A sequence of trades that collectively increases the amount of money you have and leaves the amount of each asset you have unchanged is clearly favourable.
 
-\begin{frame}{Market Data \& Market Prices}
-	% Theoretical value
-	% Price chart. Various position charts.
-\end{frame}
+	Suppose that at each time $t$ you have cash holdings of $\$c_t$ and net holdings of $a_t$ units of some asset $A$.
 
-\begin{frame}{Valuation}
+	If you make trades $(s_t,q_t,p_t)$ at times $t \in \tau = \{t_0,\ldots, t_n\}$, then we will have
+	$$a_{t_1} - a_{t_0} = \sum_{t\in \tau} s_t q_t$$
+	%$$c_{t_1} - c_{t_0} = \sum_{t\in\tau} - p_t s_t q_t =  \int_{t\in\tau} -p_t da_t\footnote{$da_t$ is the Radon-Nikodym derivative of $a_t$ with respect to the counting measure of $\tau$.} \pause = p_{t_1}a_{t_1}-p_{t_0}a_{t_0}$$
+
+	Suppose you make trades $(s_t,q_t,p_t)$ at times $t$. The change in your cash holdings $\Pi_t$ will be
+	$\Pi = $
+	The net change in our cash holdings as a result of a sequence of trades $ will be
+	$$\Pi_{\mathcal{T}}=\sum_{\tau\in\mathcal{T}} -s_\tau q_\tau p_\tau.$$
+
+	Consider the set of all our trades made in some time period $[0,T]$ for a particular asset. For any $t\in[0,T]$, our position $x_t$ will satisfy
+	$$x_t - x_0 = \sum_{\tau : t_\tau \leq t} s_\tau q_\tau.$$
+	Our cash holdings $\Pi_t$ will satisfy
+	$$\Pi_t - \Pi_0 = \sum_{\tau : t_\tau \leq t} -p_\tau s_\tau q_\tau = \int_0^t p_t dx_t$$ %p_t is (our) LTP
+
+	a db = [ab] - b da
+
+
+	Consider a day's worth of trades for a single asset. I begin at time $0$ with a net position of $0$. My position at time $t$ is given by
+	$$x_t = \int_0^t dx_t,$$
+	where $\int_a^b dx_t$
+	
 	%Mark to market valuation
 	%Portfolio value
 	\begin{block}{Portfolio Capitalisation}
-		Because of collateralisation requirements, \textbf{the amount you can trade (and therefore your potential profits) are constrained by how much money you have at the exchange.}
+		Because of collateralisation requirements, \textbf{the amount you can trade (and therefore your potential profit) is constrained by how much money you have at the exchange.}
 	\end{block}
 	
 	% Portfolio value integration by parts: pos dprice ~ price dpos
 	% Dot products explainer
 	% Portfolio returns and log-returns
+\end{frame}
+
+\begin{frame}{Trade Formation}
+	On an electronic exchange, trade prices are determined by participants interacting with the exchange's \textbf{matching engine}.%Explain this term
+
+	The most common type of matching engine is a \textbf{limit-order book}, which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
+
+	\pause
+	
+	\begin{block}{Limit-Order Book} %Special kind of data structure. Also called a double auction
+		At any point in time, market participants can create a request (`\textbf{limit order}') to trade up to $q$ units at a price $p$ (or better). %Explain 'better'
+		
+		They are then said to be ``\textbf{bid} for $p$'' (if requesting to buy) or ``\textbf{ask}ing at $p$'' (if requesting to sell). %Bid and ask are terms referring to limit order directionality
+
+		All limit orders are collected into a \textbf{limit-order book}. Orders may then be \textbf{cancelled}, \textbf{modified}, or \textbf{matched}. %matching is also called a fill
+
+		%Limit orders are options provided to other market participants
+
+		%Explain matching
+		%Explain market orders as a bid for infty or an ask at 0
+
+	\end{block}
+	\begin{block}{Continuous Matching}
+		% aggressive vs passive (taking/making)
+		%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
+		% order priority -> latency -> colocation, fpgas.
+	\end{block} %Usually used for intraday trading
+
+	\begin{block}{Batch Matching}
+		
+	\end{block} %Usually used for opening and closing auctions ie day-open/day-close/lunchtime, or 
+\end{frame}
+
+\begin{frame}{Market Data \& Market Prices}
+	In order to inform trading activity, market participants receive certain data about the orders and trades on the exchange.
+	% Theoretical value
+		% Efficiency
+		% Liquidity
+			% Decomposition of p&l into theo and execution
+			% Market maker as liquidity provider
+
+	% LTP
+	% Price chart. Various position charts.
+	% Microstructural noise -> Roll model
+
+	% "lit" exchange just means more market data is made public
+
+	% Order book diagram
+
+\end{frame}
+
+\begin{frame}{Valuation}
 \end{frame}
 
 \begin{frame}{Transaction Costs}
@@ -178,7 +251,7 @@
 \end{frame}
 
 \begin{frame}{Uncertainty}
-	%Dutch books & FTAP & Q vs P quant
+	%Dutch books & FTAP & Q vs P quant. Complete markets, arrow securities
 	%(No-)Arbitrage (buy low sell high. Setup for statarb later)
 \end{frame}
 
