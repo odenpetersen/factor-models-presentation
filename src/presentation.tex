@@ -212,6 +212,14 @@
 	$$\int_a^b f \frac{dg}{dx} dx = f(b)g(b)-f(a)g(a) - \int_a^b g \frac{df}{dx} dx.$$
 \end{frame}
 
+\begin{frame}{Accounting Summary}
+	\begin{align*}
+		a_{t_+}^+ - a_{t_-}^-	&= \int_{t\in T} da,
+	\\	c_{t_+}^+ - c_{t_-}^- 	&= \int_{t\in T} - p_t da,
+	\\	p_{t_+}^+ - p_{t_-}^- 	&= \int_{t\in T} dp		&= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- dp.
+	\end{align*}
+\end{frame}
+
 \begin{frame}{Portfolio Valuation}
 	Then we have
 	$$(c_{t_+} + p_{t_+}a_{t_+}) - (c_{t_-} + p_{t_-}a_{t_-}) = \int_{t\in T} a_t^- dp.$$
@@ -237,7 +245,7 @@
 	Then we have
 	$$\Pi_{t_+} - \Pi_{t_-} = \int_{t\in T} a_t^- \cdot dp,$$
 	and \textcolor{blue}{defining $\Pi_{T'} = \Pi_{t_+'}^+ - \Pi_{t_-'}^-$ as before,} we can write
-	$$\textcolor{blue}{\Pi_{[t_i,t_{i+1}]} = \int_{t\in [t_i, t_{i+1}]} d\Pi = a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
+	$$\textcolor{blue}{\Pi_{[t_i,t_{i+1}]}} = \int_{t\in [t_i, t_{i+1}]} d\Pi = a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
 	where $\frac{dp}{p_t^-}$ is the elementwise quotient.
 
 	Furthermore, we can write
@@ -277,13 +285,13 @@
 
 \begin{frame}{Log Returns}
 	If we define
-	$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
-	\textcolor{blue}{and a measure $\ell_\omega$ satisfying}
-	$$\textcolor{blue}{\ell_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-}$$
-	\textcolor{blue}{for any $t_-',t_+'$, then we have}
-	$$R_T = \exp(\ell_T) - 1,$$
-	\textcolor{blue}{and for any measurable set $\omega$ we can define}
-	$$\textcolor{blue}{R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2).}$$
+	%$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
+	%\textcolor{blue}{and a measure $\ell_\omega$ satisfying}
+	%$$\textcolor{blue}{\ell_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-}$$
+	%\textcolor{blue}{for any $t_-',t_+'$, then we have}
+	%$$R_T = \exp(\ell_T) - 1,$$
+	%\textcolor{blue}{and for any measurable set $\omega$ we can define}
+	%$$\textcolor{blue}{R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2).}$$
 
 	We call $\ell_T$ the \textbf{log-return} over the interval $T$.
 \end{frame}
@@ -295,17 +303,17 @@
 	$$r_{T'} = \frac{p_{t_{i+1}} - p_{t_i}}{p_{t_i}}$$
 	is known as the \textbf{asset returns} vector over $T'$. In contrast, $\ell_{T'}$ is not linear in $r_{T'}$. %In fact there's no function of the return that \ell_{T'} is linear in. Benefits and drawbacks, eg expectation/variance
 
-	For a disjoint collection of measurable sets $\omega_1,\omega_2,\ldots\omega_n$ whose union is $\Omega$, we have
+	For a disjoint collection of \textcolor{blue}{(measurable)} sets $\omega_1,\omega_2,\ldots\omega_n$ whose union is $\Omega$, we have
 	$$\ell_\Omega = \sum_{i=1}^n \ell_{\omega_i},$$
 	$$R_\Omega = \prod_{i=1}^n (1+R_{\omega_i}) - 1 \approx \sum_{i=1}^n R_{\omega_i} + O\left(\sum_{i=1}^n\sum_{j=1}^n \vert R_{\omega_i} R_{\omega_j} \vert\right).$$
 \end{frame}
 
 \begin{frame}{Annualisation}
-	The \textbf{annualised log-return} is $\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$, where $\lambda_\omega$ is the duration \textcolor{blue}{(lebesgue measure)} of $\omega$ in units of time.%Interpretation. Not defined for instantaneous times
+	The \textbf{annualised log-return} over $\omega$ is $\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$, where $\lambda_\omega$ is the duration \textcolor{blue}{(lebesgue measure)} of $\omega$ in units of time.%Interpretation. Not defined for instantaneous times
 
-	The \textbf{geometrically annualised return} is $(1 + R_\omega)^\frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}} - 1 = \exp\left(\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}\right) - 1$.
+	The \textbf{geometrically annualised return} over $\omega$ is $(1 + R_\omega)^\frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}} - 1 = \exp\left(\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}\right) - 1$.
 
-	The \textbf{arithmetically annualised return} is $R_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$.%Approximately same. A bit less meaningful
+	The \textbf{arithmetically annualised return} over $\omega$ is $R_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$. %Approximately same. A bit less meaningful
 
 	%All dimensionless
 \end{frame}
@@ -320,7 +328,7 @@
 \begin{frame}{Trade Formation}
 	In practice, the trades we can make at a time $t$ and a price $p_t$ are limited by our ability to find a willing counterparty.
 
-	On an electronic exchange, trades are formed through interactions with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
+	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
 
 	The most common type of matching engine is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
 
@@ -337,16 +345,18 @@
 		%Explain matching
 		%Explain market orders as a bid for infty or an ask at 0
 	\end{block}
-	\begin{block}{Continuous Matching}
-		%Limit orders are options provided to other market participants
-		% aggressive vs passive (taking/making)
-		%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
-		% order priority -> latency -> colocation, fpgas.
-	\end{block} %Usually used for intraday trading
+\end{frame}
 
-	\begin{block}{Batch Matching}
-		
-	\end{block} %Usually used for opening and closing auctions ie day-open/day-close/lunchtime, or 
+\begin{frame}{Continuous Matching}
+	%Usually used for intraday trading
+	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
+	% aggressive vs passive (taking/making)
+	%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
+	% order priority -> latency -> colocation, fpgas.
+\end{frame}
+
+\begin{frame}{Batch Matching}
+	%Usually used for opening and closing auctions ie day-open/day-close/lunchtime, or 
 \end{frame}
 
 \begin{frame}{Market Data \& Market Prices}
@@ -356,6 +366,7 @@
 		% Liquidity
 			% Decomposition of p&l into theo and execution
 			% Market maker as liquidity provider
+			% Amihud measure? average of |r_day|/daily_volume
 
 	% Price Proxies
 		% LTP
@@ -425,6 +436,9 @@
 
 \begin{frame}{Factor Models}
 	% Mathematics
+		%Cross sectional regression
+			%Weighting
+		%Factor cov shrinkage (paleologo 6.3.1)
 	% Sectors
 	% Fama French
 	% Factor models approximate cov matrix
@@ -432,9 +446,20 @@
 	% Overrepresentation -> equal weighting (equal weighting index)
 	% Factor loadings can't be centred (paleologo 4.4.1) unless an "equal weighting" vector is included
 	% Types (paleologo 4.6):
-		% characteristic
+		% characteristic (see paleologo 6.7)
+			%Market (1s vector)
+			%Countries and industries
+			%Momentum
+			%Fundamentals
+			%Volatility
+			%Liquidity
+			%Crowding
+			%Size
 		% statistical
-			% Latent factors (eg principal components)
+			%Market (beta). Show that this is first principal component
+			%Latent factors
+				%PPCA = Tipping and Bishop 1998, explicit solution section 3.2. Formulation assumes zscored returns, this is not a problem
+					%limits to zero paleologo section 7.1.2
 		% macroeconomic
 			% Fama macbeth
 \end{frame}
