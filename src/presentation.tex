@@ -149,7 +149,7 @@
 		\item Agreements between two parties are subject to \textbf{counterparty risk}
 		\item A \textbf{securities exchange} is a centralised trading venue %Maybe explain national market system
 		\item After trades are agreed to on an exchange, they will be \textbf{settled} in some standardised way
-		\item The net quantity of $A$ I have some claim to can either be positive (\textbf{long position}), negative (\textbf{short position}), or zero (\textbf{flat}).
+		\item The net quantity of $A$ that I have some claim to can either be positive (\textbf{long position}), negative (\textbf{short position}), or zero (\textbf{flat}).
 		\item Traders may be obligated to post assets ('locate') or money ('margin')
 	\end{itemize}
 \end{frame}
@@ -179,52 +179,28 @@
 
 	\pause
 
-	\textcolor{blue}{Define measures $a_\omega, c_\omega, p_\omega$ such that for any interval $T'=[t_-',t_+']$ we have}
+	Define measures $\mathfrak{a}_\omega, \mathfrak{c}_\omega, \mathfrak{p}_\omega$ such that for any interval $T'=[t_-',t_+']$ we have
 
 	\vspace{-0.06\textheight}
 	\begin{align*}
-		\textcolor{blue}{a_{T'}} &&= \int_{T'} da &&= a_{t_+'}^+ - a_{t_-'}^-
-	\\	\textcolor{blue}{c_{T'}} &&= \int_{T'} dc &&= c_{t_+'}^+ - c_{t_-'}^-
-	\\	\textcolor{blue}{p_{T'}} &&= \int_{T'} dp &&= p_{t_+'}^+ - p_{t_-'}^- &&= p_{t_+'} - p_{t_-'}^-.
+		\mathfrak{a}_{T'} &&= \int_{T'} d\mathfrak{a} &&= a_{t_+'}^+ - a_{t_-'}^-	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} d\mathfrak{a},
+	\\	\mathfrak{c}_{T'} &&= \int_{T'} d\mathfrak{c} &&= c_{t_+'}^+ - c_{t_-'}^-	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t d\mathfrak{a},
+	\\	\mathfrak{p}_{T'} &&= \int_{T'} d\mathfrak{p} &&= p_{t_+'}^+ - p_{t_-'}^- 	&= p_{t_+'} - p_{t_-'}^-.		&&= \int_{t\in T} d\mathfrak{p}.
 	\end{align*}%Special case: t_-'=t_+'
-
-	\pause
-
-	Then we have
-	\vspace{-0.04\textheight}
-	\begin{align*}
-		\textcolor{blue}{a_T}	&&= a_{t_+}^+ - a_{t_-}^- 	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} da,
-	\\	\textcolor{blue}{c_T}	&&= c_{t_+}^+ - c_{t_-}^- 	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t da,
-	\\	\textcolor{blue}{p_T}	&&= p_{t_+}^+ - p_{t_-}^- 	&= p_{t_+} - p_{t_-'}^-			&&= \int_{t\in T} dp.
-	\end{align*}
 \end{frame}
 
 \begin{frame}{Cash Holdings}
-	\vspace{-0.15\textheight}
-	\begin{align*}
-		\\	c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
-		\\				&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
-		\\				&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
-		\\				&					&&\textcolor{blue}{= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- dp},
-		\\				&					&&\textcolor{blue}{= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- dp},
-	\end{align*}
+	It can be shown (see appendix) that
+	$$\fraktur{c}_T = c_{t_+} - c_{t_-} = \int_{t\in T} - p_t d\mathfrak{a} = p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.$$
 	This is similar in spirit to integration by parts:
 	$$\int_a^b f \frac{dg}{dx} dx = f(b)g(b)-f(a)g(a) - \int_a^b g \frac{df}{dx} dx.$$
-\end{frame}
-
-\begin{frame}{Accounting Summary}
-	\begin{align*}
-		a_{t_+}^+ - a_{t_-}^-	&= \int_{t\in T} da,
-	\\	c_{t_+}^+ - c_{t_-}^- 	&= \int_{t\in T} - p_t da,
-	\\	p_{t_+}^+ - p_{t_-}^- 	&= \int_{t\in T} dp		&= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- dp.
-	\end{align*}
 \end{frame}
 
 \begin{frame}{Portfolio Valuation}
 	Then we have
 	$$(c_{t_+} + p_{t_+}a_{t_+}) - (c_{t_-} + p_{t_-}a_{t_-}) = \int_{t\in T} a_t^- dp.$$
 
-	The quantity $\$v_t = \$p_t a_t$ is known as the \textbf{dollar value} of our $A$ holdings \textbf{marked} to the price $\$p_t$.
+	The quantity $\$v_t = \$p_t a_t$ is known as the \textbf{dollar value} of our $A$ holdings \textbf{marked} to the price $\$p_t$.%Marking just means multiplication of units held by a unit price
 
 	\pause
 
@@ -272,26 +248,36 @@
 \end{frame}
 
 \begin{frame}{Returns}
-	Because cash kept in a portfolio cannot be put to use elsewhere, we might want an estimate for how much extra P\&L would result from a marginal dollar added to the portfolio value over the interval $T$.
+	Because we typically need money to collateralise some fraction of unsettled trades and short borrow, and hold assets instead of cash, portfolio management requires capital that cannot be used elsewhere.
 
-	If our initial portfolio value were $\$\Pi_{t_-}+\$1$ instead of $\Pi_{t_-}$, and we can simply scale up trade sizes at the same prices, then setting
-	$$L = \frac{\Pi_{t_-}+1}{\Pi_{t_-}}$$
+	In the case of long-only spot-settled trading, if we were to turn our portfolio into cash, or convert cash into an identical portfolio, we would receive/require $\$\Pi_t$.
+
+	\pause
+
+	Consequently, to judge the efficiency of our trading, we might want an estimate for how much extra P\&L over the interval $T$ would result from a marginal dollar added to $\$\Pi_t$.
+
+	\pause
+
+	If our initial portfolio value were $\$\Pi_{t_-}+\$N$ instead of $\Pi_{t_-}$, and we can simply scale up trade sizes at the same prices, then setting
+	$$L = \frac{\Pi_{t_-}+N}{\Pi_{t_-}}$$
 	means our new P\&L will simply be $L \int_T d\Pi$.
 
+	\pause
+
 	The increase in P\&L per dollar added to initial portfolio value is then
-	$$R_T = L \int_T d\Pi - \int_T d\Pi = \frac{\int_T d\Pi}{\Pi_{t_-}}.$$
+	$$R_T = \frac{L \int_T d\Pi - \int_T d\Pi}{N} = \frac{\int_T d\Pi}{\Pi_{t_-}}.$$
 	We call $R_T$ the \textbf{return} on the initial portfolio value.
 \end{frame}
 
 \begin{frame}{Log Returns}
 	If we define
-	%$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
-	%\textcolor{blue}{and a measure $\ell_\omega$ satisfying}
-	%$$\textcolor{blue}{\ell_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-}$$
-	%\textcolor{blue}{for any $t_-',t_+'$, then we have}
-	%$$R_T = \exp(\ell_T) - 1,$$
-	%\textcolor{blue}{and for any measurable set $\omega$ we can define}
-	%$$\textcolor{blue}{R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2).}$$
+	$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
+	\textcolor{blue}{and a measure $\ell_\omega$ satisfying}
+	$$\textcolor{blue}{\ell_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-}$$
+	\textcolor{blue}{for any $t_-',t_+'$, then we have}
+	$$R_T = \exp(\ell_T) - 1,$$
+	\textcolor{blue}{and for any measurable set $\omega$ we can define}
+	$$\textcolor{blue}{R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2).}$$
 
 	We call $\ell_T$ the \textbf{log-return} over the interval $T$.
 \end{frame}
@@ -331,23 +317,34 @@
 	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
 
 	The most common type of matching engine is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
+\end{frame}
+
+\begin{frame}{Limit Order Book}%Special kind of data structure
+	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,p)$ to trade up to $q$ units in direction $s=\pm1$ at a price $\$p$ (or better). %Explain 'better'. $p is sometimes called the reserve price
+	
+	They are then said to be ``\textbf{bid} for $\$p$'' (if requesting to buy) or ``\textbf{ask}ing/\textbf{offer}ing at $\$p$'' (if requesting to sell). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
 
 	\pause
-	
-	\begin{block}{Limit-Order Book} %Special kind of data structure
-		At any point in time, market participants can create a request (`\textbf{limit order}') to trade up to $q$ units in direction $s=\pm1$ at a price $\$p$ (or better). %Explain 'better'
-		
-		They are then said to be ``\textbf{bid} for $\$p$'' (if requesting to buy) or ``\textbf{ask}ing at $\$p$'' (if requesting to sell). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
 
-		All limit orders are collected into a \textbf{limit-order book}. Orders may then be \textbf{cancelled}, \textbf{modified}, or \textbf{matched}. %matching is also called a fill
+	All limit orders are collected into a \textbf{limit-order book}.
 
-		Whenever the book contains some order bid for $p_1$ and some other order asking at $p_2\leq p_1$, 
-		%Explain matching
-		%Explain market orders as a bid for infty or an ask at 0
-	\end{block}
+	Users can do three things:
+	\begin{itemize}
+		\item Add an order
+		\item Cancel an order
+		\item Modify an order%In what ways can it be modified
+	\end{itemize}
+
+	\pause
+
+	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be satisfied by trading $q=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{crossed}.
+
+	If these orders are \textbf{matched}, $q$ units will trade at $\$p$ and the orders will become $(+1,p_1,q_1-q), (-1,p_2,q_2-q)$. %A match is also called a fill
+	Order(s) with no quantity remaining will be removed from the book.
 \end{frame}
 
 \begin{frame}{Continuous Matching}
+	%Explain matching process
 	%Usually used for intraday trading
 	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
 	% aggressive vs passive (taking/making)
@@ -363,6 +360,21 @@
 	In order to inform trading activity, market participants receive certain data about the orders and trades on the exchange.
 	% Theoretical value
 		% Efficiency
+			%Edge
+				%Latency (is this immoral somehow)
+				%PFOF
+				%Good pricing
+				%Smart order placement (queue rules)
+				%Rebates
+					%Fee asymmetries
+				%Large balance sheet -> higher risk tolerance
+				%Funding asymmetry (better funding rates)
+				%Alt data
+				%Human input -> see things algos dont
+				%Better modelling -> see things humans dont
+				%Better UI -> algos and humans work together
+				%Market access / cross-market synthesis
+				%Statistical anomalies/mispricing
 		% Liquidity
 			% Decomposition of p&l into theo and execution
 			% Market maker as liquidity provider
@@ -428,6 +440,7 @@
 
 \begin{frame}{Capital Asset Pricing Model}
 	% Arbitrage arguments
+	% Generalisation to spiked covariance matrix, finite universe. paleologo 7.2.1
 	%Efficient Markets
 	%Index investing. (Stats?)
 		%Why ASX200 and not all ords (microstructure)
@@ -458,7 +471,7 @@
 		% statistical
 			%Market (beta). Show that this is first principal component
 			%Latent factors
-				%PPCA = Tipping and Bishop 1998, explicit solution section 3.2. Formulation assumes zscored returns, this is not a problem
+				%PPCA = Tipping and Bishop 1998, explicit solution section 3.2. Formulation assumes returns zscored by idio vol, this is not a problem
 					%limits to zero paleologo section 7.1.2
 		% macroeconomic
 			% Fama macbeth
@@ -476,4 +489,21 @@
 	% Regularisation
 	% Factor models in options pricing
 		% Diagnosing issues with the model eg because black scholes is wrong ("all models are wrong")
+
+\section{Appendix}
+\begin{frame}{Proof of $\fraktur{c}_T$ Identity}
+	\begin{align*}
+		\\	c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
+		\\				&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
+		\\				&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
+		\\				&					&&\textcolor{blue}{= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- d\mathfrak{p}},
+		\\				&					&&\textcolor{blue}{= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}},
+	\end{align*}
+\end{frame}
+
+\begin{frame}{Stuff I missed}
+	% Data cleaning
+	% How to find alpha
+	% How to get a job
+\end{frame}
 \end{document}
