@@ -44,6 +44,7 @@
 \begin{frame}{Outline}
 	\tableofcontents
 	%% Good to include concrete data examples throughout
+	%% Make sure := for definitions
 \end{frame}
 
 % Section 1
@@ -180,33 +181,35 @@
 	\pause
 
 	Define measures $\mathfrak{a}_\omega, \mathfrak{c}_\omega, \mathfrak{p}_\omega$ such that for any interval $T'=[t_-',t_+']$ we have
+	$$\mathfrak{a}_{T'} := a_{t_+'}^+-a_{t_-'}^-, \mathfrak{c}_{T'} := c_{t_+'}^+-c_{t_-'}^-, \mathfrak{p}_{T'} := p_{t_+'}^+-p_{t_-'}^-.$$
+	Then we have
 
 	\vspace{-0.06\textheight}
 	\begin{align*}
-		\mathfrak{a}_{T'} &&= \int_{T'} d\mathfrak{a} &&= a_{t_+'}^+ - a_{t_-'}^-	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} d\mathfrak{a},
-	\\	\mathfrak{c}_{T'} &&= \int_{T'} d\mathfrak{c} &&= c_{t_+'}^+ - c_{t_-'}^-	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t d\mathfrak{a},
-	\\	\mathfrak{p}_{T'} &&= \int_{T'} d\mathfrak{p} &&= p_{t_+'}^+ - p_{t_-'}^- 	&= p_{t_+'} - p_{t_-'}^-.		&&= \int_{t\in T} d\mathfrak{p}.
+		a_{t_+'}^+ - a_{t_-'}^-	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} d\mathfrak{a},
+	\\	c_{t_+'}^+ - c_{t_-'}^-	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t d\mathfrak{a},
+	\\	p_{t_+'}^+ - p_{t_-'}^- &= p_{t_+'} - p_{t_-'}^-.		&&= \int_{t\in T} d\mathfrak{p}.
 	\end{align*}%Special case: t_-'=t_+'
 \end{frame}
 
 \begin{frame}{Cash Holdings}
-	It can be shown (see appendix) that
-	$$\fraktur{c}_T = c_{t_+} - c_{t_-} = \int_{t\in T} - p_t d\mathfrak{a} = p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.$$
+	It can be shown (see appendix) that the cashflow over the entire interval $T=[t_-,t_+]$ is
+	$$c_{t_+} - c_{t_-} = \int_{t\in T} - p_t d\mathfrak{a} = p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.$$
 	This is similar in spirit to integration by parts:
 	$$\int_a^b f \frac{dg}{dx} dx = f(b)g(b)-f(a)g(a) - \int_a^b g \frac{df}{dx} dx.$$
-\end{frame}
 
-\begin{frame}{Portfolio Valuation}
 	Then we have
 	$$(c_{t_+} + p_{t_+}a_{t_+}) - (c_{t_-} + p_{t_-}a_{t_-}) = \int_{t\in T} a_t^- dp.$$
 
 	The quantity $\$v_t = \$p_t a_t$ is known as the \textbf{dollar value} of our $A$ holdings \textbf{marked} to the price $\$p_t$.%Marking just means multiplication of units held by a unit price
+\end{frame}
 
-	\pause
-
+\begin{frame}{Portfolio Valuation}
 	Suppose now that we trade multiple assets, such that $p_t$, $a_t$ and $v_t$ are vector-valued, with $v_t$ the elementwise product of $p_t$ and $a_t$.
 
 	A collection of assets held in quantities $a_t$ is known as a \textbf{portfolio}.
+
+	\pause
 
 	We can write
 	$$(c_{t_+} + p_{t_+} \cdot a_{t_+}) - (c_{t_-} + p_{t_-} \cdot a_{t_-}) = \int_{t\in T} a_t^- \cdot dp,$$
@@ -219,14 +222,12 @@
 \begin{frame}{Profitability}
 	The quantity $\$\Pi_{t_+} - \$\Pi_{t_-}$ is our \textbf{net P\&L} (profit and loss) over the interval $T$, marked to $p_t$.
 	Then we have
-	$$\Pi_{t_+} - \Pi_{t_-} = \int_{t\in T} a_t^- \cdot dp,$$
-	and \textcolor{blue}{defining $\Pi_{T'} = \Pi_{t_+'}^+ - \Pi_{t_-'}^-$ as before,} we can write
-	$$\textcolor{blue}{\Pi_{[t_i,t_{i+1}]}} = \int_{t\in [t_i, t_{i+1}]} d\Pi = a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
+	$$\Pi_{t_+} - \Pi_{t_-} = \int_{t\in T} a_t^- \cdot dp.$$
+	Introducing a measure
+	$$\pi_{T'} := \Pi_{t_+'}^+ - \Pi_{t_-'}^-,$$
+	we can write
+	$$\Pi_{t_{i+1}} - \Pi_{t_i} = \int_{t\in [t_i, t_{i+1}]} d\pi = a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
 	where $\frac{dp}{p_t^-}$ is the elementwise quotient.
-
-	Furthermore, we can write
-	$$\frac{\int_T d\Pi}{\Pi_t^-} = \frac{1}{\Pi_t^-}v_t^- \cdot \frac{dp}{p_t^-} = w_t^- \cdot \frac{dp}{p_t^-},$$
-	where $w_t = \frac{1}{\Pi_t}v_t$ is the \textbf{weight vector}. %Explain the interpretation of this
 \end{frame}
 
 \begin{frame}{Leverage}
@@ -258,50 +259,42 @@
 
 	\pause
 
-	If our initial portfolio value were $\$\Pi_{t_-}+\$N$ instead of $\Pi_{t_-}$, and we can simply scale up trade sizes at the same prices, then setting
+	If our initial portfolio value were $\$\Pi_{t_-}+\$N$ instead of $\Pi_{t_-}$, and we could simply scale up trade sizes at the same prices, then setting
 	$$L = \frac{\Pi_{t_-}+N}{\Pi_{t_-}}$$
-	means our new P\&L will simply be $L \int_T d\Pi$.
+	means our new P\&L would simply be $L \int_T d\pi$.
 
 	\pause
 
 	The increase in P\&L per dollar added to initial portfolio value is then
-	$$R_T = \frac{L \int_T d\Pi - \int_T d\Pi}{N} = \frac{\int_T d\Pi}{\Pi_{t_-}}.$$
+	$$R_T = \frac{L \int_T d\pi - \int_T d\pi}{N} = \frac{\int_T d\pi}{\Pi_{t_-}}.$$
 	We call $R_T$ the \textbf{return} on the initial portfolio value.
 \end{frame}
 
 \begin{frame}{Log Returns}
 	If we define
 	$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
-	\textcolor{blue}{and a measure $\ell_\omega$ satisfying}
-	$$\textcolor{blue}{\ell_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-}$$
-	\textcolor{blue}{for any $t_-',t_+'$, then we have}
-	$$R_T = \exp(\ell_T) - 1,$$
-	\textcolor{blue}{and for any measurable set $\omega$ we can define}
-	$$\textcolor{blue}{R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2).}$$
+	and a measure $\mathfrak{l}_\omega$ satisfying
+	$$\mathfrak{l}_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-$$
+	for any $t_-',t_+'$, then we have
+	$$R_T = \exp(\mathfrak{l}_T) - 1,$$
+	and for any measurable set $\omega$ we can define
+	$$R_\omega = \exp(\mathfrak{l}_\omega) - 1 \approx \mathfrak{l}_\omega + O(\mathfrak{l}_\omega^2)\textrm{ (for small }\mathfrak{l}_\omega\textrm{)}.$$
 
-	We call $\ell_T$ the \textbf{log-return} over the interval $T$.
+	We call $\mathfrak{l}_T$ the \textbf{log-return} over the interval $T$.
 \end{frame}
 
 \begin{frame}{Properties of Returns and Log-Returns}
-	For an interval of the form $T' = (t_i,t_{i+1}]$, we have $w_t^-$ equal to a constant $w$ over $T'$, and
-	$$R_{T'} = w \cdot r_{T'},$$
-	where
+	Let $w_t := \frac{1}{\Pi_t}v_t$ be the \textbf{weight vector}.%Explain interpretation
+
+	For an interval $T' = (t_i,t_{i+1}]$, we have $a_t^-$ equal to a constant over $T'$, and
+	$$R_{T'} = w_{t_i}^+ \cdot r_{T'},$$
+	where the elementwise quotient
 	$$r_{T'} = \frac{p_{t_{i+1}} - p_{t_i}}{p_{t_i}}$$
 	is known as the \textbf{asset returns} vector over $T'$. In contrast, $\ell_{T'}$ is not linear in $r_{T'}$. %In fact there's no function of the return that \ell_{T'} is linear in. Benefits and drawbacks, eg expectation/variance
 
-	For a disjoint collection of \textcolor{blue}{(measurable)} sets $\omega_1,\omega_2,\ldots\omega_n$ whose union is $\Omega$, we have
+	For a disjoint collection of measurable sets $\omega_1,\ldots\omega_n$ whose union is $\Omega$, we have
 	$$\ell_\Omega = \sum_{i=1}^n \ell_{\omega_i},$$
-	$$R_\Omega = \prod_{i=1}^n (1+R_{\omega_i}) - 1 \approx \sum_{i=1}^n R_{\omega_i} + O\left(\sum_{i=1}^n\sum_{j=1}^n \vert R_{\omega_i} R_{\omega_j} \vert\right).$$
-\end{frame}
-
-\begin{frame}{Annualisation}
-	The \textbf{annualised log-return} over $\omega$ is $\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$, where $\lambda_\omega$ is the duration \textcolor{blue}{(lebesgue measure)} of $\omega$ in units of time.%Interpretation. Not defined for instantaneous times
-
-	The \textbf{geometrically annualised return} over $\omega$ is $(1 + R_\omega)^\frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}} - 1 = \exp\left(\ell_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}\right) - 1$.
-
-	The \textbf{arithmetically annualised return} over $\omega$ is $R_\omega \frac{\textrm{1 year}}{\textcolor{blue}{\lambda_\omega}}$. %Approximately same. A bit less meaningful
-
-	%All dimensionless
+	$$R_\Omega = \left(\prod_{i=1}^n (1+R_{\omega_i})\right) - 1 \approx \sum_{i=1}^n R_{\omega_i} + O\left(\sum_{i=1}^n\sum_{j=1}^n \vert R_{\omega_i} R_{\omega_j} \vert\right).$$
 \end{frame}
 
 \begin{frame}{Summary}
@@ -316,24 +309,19 @@
 
 	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
 
-	The most common type of matching engine is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
+	The most common type of matching engine design is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
 \end{frame}
 
 \begin{frame}{Limit Order Book}%Special kind of data structure
 	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,p)$ to trade up to $q$ units in direction $s=\pm1$ at a price $\$p$ (or better). %Explain 'better'. $p is sometimes called the reserve price
 	
-	They are then said to be ``\textbf{bid} for $\$p$'' (if requesting to buy) or ``\textbf{ask}ing/\textbf{offer}ing at $\$p$'' (if requesting to sell). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
+	They are then said to be ``\textbf{bid} for $\$p$'' ($s=+1$) or ``\textbf{ask}ing/\textbf{offer}ing at $\$p$'' ($s=-1$). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
 
 	\pause
 
 	All limit orders are collected into a \textbf{limit-order book}.
 
-	Users can do three things:
-	\begin{itemize}
-		\item Add an order
-		\item Cancel an order
-		\item Modify an order%In what ways can it be modified
-	\end{itemize}
+	Users can add, cancel and modify orders at any time.%Limits on modification. Ratelimits, message limits etc.
 
 	\pause
 
@@ -343,17 +331,25 @@
 	Order(s) with no quantity remaining will be removed from the book.
 \end{frame}
 
-\begin{frame}{Continuous Matching}
-	%Explain matching process
-	%Usually used for intraday trading
+\begin{frame}{Matching Mechanism}
 	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
+	%Market orders
 	% aggressive vs passive (taking/making)
 	%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
-	% order priority -> latency -> colocation, fpgas.
 \end{frame}
 
 \begin{frame}{Batch Matching}
 	%Usually used for opening and closing auctions ie day-open/day-close/lunchtime, or 
+\end{frame}
+
+\begin{frame}{Continuous Matching}
+	Continuous matching is triggered as soon as the book becomes crossed.
+
+	Orders are matched in such a way as to uncross the book.
+	%Market orders
+	%Explain matching process
+	%Usually used for intraday trading
+	% order priority -> latency -> colocation, fpgas.
 \end{frame}
 
 \begin{frame}{Market Data \& Market Prices}
@@ -491,19 +487,32 @@
 		% Diagnosing issues with the model eg because black scholes is wrong ("all models are wrong")
 
 \section{Appendix}
-\begin{frame}{Proof of $\fraktur{c}_T$ Identity}
+\begin{frame}{Proof Sketch for $\mathfrak{c}_T$ Identity}
 	\begin{align*}
 		\\	c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
 		\\				&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
 		\\				&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
-		\\				&					&&\textcolor{blue}{= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- d\mathfrak{p}},
-		\\				&					&&\textcolor{blue}{= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}},
+		\\				&					&&= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- d\mathfrak{p}
+		\\				&					&&= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.
 	\end{align*}
 \end{frame}
+
+\begin{frame}{Annualised Returns}
+	The \textbf{annualised log-return} over $\omega$ is $\ell_\omega \frac{\textrm{1 year}}{\lambda_\omega}$, where $\lambda_\omega$ is the duration (lebesgue measure) of $\omega$ in units of time.%Interpretation. Not defined for instantaneous times
+
+	The \textbf{geometrically annualised return} over $\omega$ is $(1 + R_\omega)^\frac{\textrm{1 year}}{\lambda_\omega} - 1 = \exp\left(\ell_\omega \frac{\textrm{1 year}}{\lambda_\omega}\right) - 1$.
+
+	The \textbf{arithmetically annualised return} over $\omega$ is $R_\omega \frac{\textrm{1 year}}{\lambda_\omega}$. %Approximately same. A bit less meaningful
+
+	%All dimensionless
+\end{frame}
+
 
 \begin{frame}{Stuff I missed}
 	% Data cleaning
 	% How to find alpha
 	% How to get a job
+	% Adverse selection. "Certainly, the modern compendium of mental illnesses (DSM-5) takes a dim view of people who think everyone is out to get them. Yet financial markets are different: people really are out to get you, after all." - Agustin Lebron, The Laws of Trading
+	% "People without dirty hands are wrong."
 \end{frame}
 \end{document}
