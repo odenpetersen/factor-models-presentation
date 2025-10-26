@@ -53,7 +53,7 @@
 \begin{frame}{Spot Transactions}
 	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.
 
-	If I give you $q$ units of some asset $A$, and you give me $\$p$, then:
+	If I give you $q>0$ units of some asset $A$, and you give me $\$p$, then:
 	\begin{itemize}
 		\item I have \textbf{sold} $q$ units of $A$ to you at $\frac{\$p}{q}$
 		\item You have \textbf{bought} $q$ units of $A$ from me for $\frac{\$p}{q}$
@@ -309,11 +309,13 @@
 
 	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
 
+	For each trade $(s,q,\$p)$, the exchange will typically charge a fee proportional to the \textbf{dollar volume} $\$pq$ of the trade. Fee rates may vary depending on trade type and between participants in accordance with exchange policy.
+
 	The most common type of matching engine design is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
 \end{frame}
 
 \begin{frame}{Limit Order Book}%Special kind of data structure
-	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,p)$ to trade up to $q$ units in direction $s=\pm1$ at a price $\$p$ (or better). %Explain 'better'. $p is sometimes called the reserve price
+	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,\$p)$ to trade up to $q$ units in direction $s=\pm1$ at any price $\$(p-sm), m\geq0$. The value $\$m$ is known as the \textbf{price improvement}. %The request poster prefers large m. $p is sometimes called the reserve price
 	
 	They are then said to be ``\textbf{bid} for $\$p$'' ($s=+1$) or ``\textbf{ask}ing/\textbf{offer}ing at $\$p$'' ($s=-1$). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
 
@@ -321,35 +323,116 @@
 
 	All limit orders are collected into a \textbf{limit-order book}.
 
-	Users can add, cancel and modify orders at any time.%Limits on modification. Ratelimits, message limits etc.
+	Users can add, cancel and modify orders, subject to restrictions.%Limits on modification. Ratelimits, message limits etc. GFD etc - FOK FAK explained later
 
 	\pause
 
-	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be satisfied by trading $q=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{crossed}.
+	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be at least partly satisfied by trading up to $q_\max=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{in cross}.
 
-	If these orders are \textbf{matched}, $q$ units will trade at $\$p$ and the orders will become $(+1,p_1,q_1-q), (-1,p_2,q_2-q)$. %A match is also called a fill
-	Order(s) with no quantity remaining will be removed from the book.
-\end{frame}
+	\pause
 
-\begin{frame}{Matching Mechanism}
-	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
-	%Market orders
-	% aggressive vs passive (taking/making)
-	%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
+	If an order $(s,q,\$p)$ is in cross with another, it may be \textbf{matched} for $q'$ units. The total matched quantity for all buy orders must equal the total matched quantity for all sell orders.
+
+	In this case, $q'$ units will trade, and the order will become $(s,q-q',\$p)$.
+
+	If $q=q'$ the order is said to be \textbf{fully filled} and will be removed from the book. Otherwise, it is said to be \textbf{partially filled}.
+
+	The ability to quickly find matches for a large number of units at a reasonable price is known as \textbf{liquidity}, and is another major benefit of centralisation.
 \end{frame}
 
 \begin{frame}{Batch Matching}
-	%Usually used for opening and closing auctions ie day-open/day-close/lunchtime, or 
+	Let $\mathcal{L}_t$ be the collection of all limit orders available for trading at time $t$. We can partition this into $\mathcal{L}_t = \mathcal{B}_t\cup\mathcal{A}_t$, with $\mathcal{B}_t$ the bid orders and $\mathcal{A}_t$ the ask orders.
+
+	Now define the functions
+	\begin{align*}
+		Q_t(+1,\$p)	&&= \sum_{(+1,q',\$p') \in \mathcal{B}_t : \$p\leq \$p'} q'
+		Q_t(-1,\$p)	&&= \sum_{(-1,q',\$p') \in \mathcal{A}_t : \$p\geq \$p'} q'
+		M_t(\$p)	&&= \min(Q_t(+1,\$p),Q_t(-1,\$p))
+	\end{align*}
+	The functions $Q_t(-1,\$p)$ and $Q_t(+1,\$p)$ are known as the \textbf{supply curve} and \textbf{demand curve} respectively. The function $M_t(\$p)$ represents the \textbf{matchable quantity} at $\$p$.
+	The book $\mathcal{L}_t$ is in cross if and only if there exists some $\$p$ with $M_t(\$p)>0$.
+
+	In \textbf{batch} or \textbf{auction} style matching, orders are matched with one another only at particular discrete times.
+
+	\begin{enumerate}
+		\item Prior to the \textbf{match time} $t*$, users can typically add, modify and cancel limit orders.
+		\item At each time $t\leq t*$, an \textbf{indicative price} $\$p*_t$ will be selected such that $M_t(\$p*_t)$ is maximal. Tiebreaking will depend on exchange rules.
+		\item Finally, at the match time $t*$, some subset of the crossed limit orders will be matched at $\$p*$ for a total quantity $M_{t*}(\$p*_{t*})$. After the match, the book will no longer be crossed.
+	\end{enumerate}
+
+	Assuming a constant fee rate, maximising $M_t(\$p*_t)$ will maximise the dollar value of exchange fees. It is also equivalent to maximising the sum of $qm$ across all orders, where $q$ is the quantity filled and $m$ is the price improvement.
+
+	The following monotonicity properties typically hold:
+	\begin{itemize}
+		\item $\$p*_t$ nondecreasing in $\mathcal{B}_t$ and nonincreasing in $\mathcal{A}_t$
+		\item For each $\$p$, $M_t(\$p)$ nondecreasing in $\mathcal{L}_t$
+		\item For individual orders $(s,q,\$p)$, we will have $\$p*_t$ nondecreasing in $\$p$ and $sq$. The sensitivity of $\$p*_{t*}$ to $\$p,sq$ is known as \textbf{instantaneous price impact}.
+		\item For individual orders $(s,q,\$p)$ and each $\$p'$, we will have $M_t(\$p')$ nondecreasing in $q$ and nondecreasing in $\$sp$.
+	\end{itemize}
+
+	\begin{block}{Price Priority}
+		Because $M_t(\$p')$ is nondecreasing in $sp$, the matching will be designed to obey \textbf{price priority}.
+	
+		If we have two orders $(s_1,q_1,\$p_1), (s_2,q_2,\$p_2)$ with $\$s_1p_1 > \$s_2p_2$, then the second order cannot be matched unless the first is completely filled.
+	\end{block}
+
+	It is common to use this matching style at the beginning or end of a trading day or lunch break, or when there is some kind of market instability such as following a large price move or company announcement. The match time is sometimes referred to as a \textbf{liquidity event} because of the large volume traded, and the relative insensitivity of trade price to order quantity.%Price impact nonnegative because of monotonicity property
+
+	\begin{block}{Match Time Randomisation}
+		Because the order book is often visible to all participants, traders wishing to hide their intentions or make use of all available information may be incentivised to wait until immediately before the match time to post orders.
+
+		To minimise computational throughput requirements for the matching engine, and give more information to all traders, the match time is typically chosen at random in some short interval in order to disincentivise this behaviour.
+
+	\end{block}
+	\begin{block}{Time Priority}
+		To further encourage early submission of orders, many exchanges also implement a time priority rule.
+
+		If two orders exist at the same price $\$p$, the one that reached the matching engine later cannot be matched unless the earlier order is completely filled.
+
+		This would have minimal effect if we could just insert the later order at a price $\$p+s\epsilon$ for some very small $\epsilon>0$.
+
+		To avoid this, prices are only allowed to be integer multiples of some small dollar value, known as the \textbf{tick size}.
+	\end{block}
 \end{frame}
 
 \begin{frame}{Continuous Matching}
-	Continuous matching is triggered as soon as the book becomes crossed.
+	In \textbf{continuous matching}, a match time is triggered every time a new limit order causes the book to become crossed.
 
-	Orders are matched in such a way as to uncross the book.
+	If the matching engine receives an order at $t$, then immediately before and after $t$ the book will be uncrossed.
+
+	The only orders involved in the match will be the arriving order and some set of orders $\mathcal{M}_t$ in the opposite direction. The arriving order is known as the \textbf{active} or \textbf{aggressive} order, and the pre-existing orders are known as \textbf{passive}. %Also known as taker and maker orders. Sometimes have different fees
+
+	% Passive orders provide liquidity to anybody who wants to trade. This liquidity goes away when traded against, so latency matters. Adverse selection comes into play here
+
+	\pause
+
+	Unlike auction-style matching, there may be multiple trade prices according to the prices of the passive orders.
+
+	For each $q'$ matched against a passive order $(s,q,\$p)$, the active order will trade $q'$ units with the passive order at $\$p$. %No price improvement for passive orders
+
+	The per-unit price achieved by the active trader will be
+	$$\frac{\sum_{(s,q,\$p)\in\mathcal{M}_t} \$pq}{\sum_{(s,q,\$p)\in\mathcal{M}_t} q}.$$ %This may or may not be a multiple of the tick size.
+
+	%FAK,FOK
 	%Market orders
-	%Explain matching process
 	%Usually used for intraday trading
 	% order priority -> latency -> colocation, fpgas.
+
+	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
+	
+	$$P_t(sq) = s\max_\{(p : Q_t(s,p)\geq q\} sp$$
+
+
+	If I want to immediately trade $q$ units at time $t$ in some direction $s$ ``with the market'', I require that
+	$$\sum_{(-s,q',p')\in\mathcal{L}_t}q' \geq q.$$
+	The price I pay will depend on which orders I match with and for how many units. We can denote the best such price as
+	$$p_t(sq) = $$
+
+	If $p_t(sq)$ is the best price I can get by 
+
+
+	%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
+	% "Certainly, the modern compendium of mental illnesses (DSM-5) takes a dim view of people who think everyone is out to get them. Yet financial markets are different: people really are out to get you, after all." - Agustin Lebron, The Laws of Trading
 \end{frame}
 
 \begin{frame}{Market Data \& Market Prices}
@@ -512,7 +595,9 @@
 	% Data cleaning
 	% How to find alpha
 	% How to get a job
-	% Adverse selection. "Certainly, the modern compendium of mental illnesses (DSM-5) takes a dim view of people who think everyone is out to get them. Yet financial markets are different: people really are out to get you, after all." - Agustin Lebron, The Laws of Trading
 	% "People without dirty hands are wrong."
+	% Survivorship bias / lookahead bias
+	% Execution algos - TWAP VWAP
+	% Dividends
 \end{frame}
 \end{document}
