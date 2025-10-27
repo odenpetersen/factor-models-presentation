@@ -11,7 +11,7 @@
 \usepackage{tikz}
 
 % Title info
-\title[Short Title]{Factor Models of Returns}
+\title[Short Title]{Systematic Trading from First Principles}
 \author[Your Name]{Oden Petersen}
 \date{\today}
 
@@ -51,9 +51,9 @@
 \section{Securities Markets}
 
 \begin{frame}{Spot Transactions}
-	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.
+	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.%Counterexample: currency triangles
 
-	If I give you $q>0$ units of some asset $A$, and you give me $\$p$, then:
+	If I give you $q>0$ units of some asset $A$, and you give me $\$p$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
 	\begin{itemize}
 		\item I have \textbf{sold} $q$ units of $A$ to you at $\frac{\$p}{q}$
 		\item You have \textbf{bought} $q$ units of $A$ from me for $\frac{\$p}{q}$
@@ -308,7 +308,9 @@
 	In practice, the trades we can make at a time $t$ and a price $p_t$ are limited by our ability to find a willing counterparty.
 
 	\pause
-	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
+	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants. Usually the algorithm is mostly deterministic and publicly known, but this is not always the case and knowledge of the matching engine can give you an advantage over other traders
+
+	\pause
 
 	For each trade $(s,q,\$p)$, the exchange will typically charge a fee proportional to the \textbf{dollar volume} $\$pq$ of the trade. Fee rates may vary depending on trade type and between participants in accordance with exchange policy.
 
@@ -318,19 +320,21 @@
 \end{frame}
 
 \begin{frame}{Limit Order Book}%Special kind of data structure
-	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,\$p)$ to trade up to $q$ units in direction $s=\pm1$ at any price $\$(p-sm), m\geq0$. The value $\$m$ is known as the \textbf{price improvement}. %The request poster prefers large m. $p is sometimes called the reserve price
+	At any point in time, market participants can create a request (`\textbf{limit order}') of the form $(s,q,\$p)$ to trade up to $q$ units in direction $s=\pm1$ at any price $\$(p-sm), m\geq0$.%If I'm happy to buy for at most 10 then I'm happy to buy for 1 since this would be a price improvement of 9
+
+	The value $\$m$ is known as the \textbf{price improvement}. %The request poster prefers large m. $p is sometimes called the reserve price
 	
 	They are then said to be ``\textbf{bid} for $\$p$'' ($s=+1$) or ``\textbf{ask}ing/\textbf{offer}ing at $\$p$'' ($s=-1$). %Bid and ask are terms referring to limit order directionality. for and at also indicate direction, as mentioned before
 
 	\pause
 
-	All limit orders are collected into a \textbf{limit-order book}.
+	All limit orders active at time $t$ are collected into a \textbf{limit-order book} $\mathcal{L}_t$.
 
 	Users can add, cancel and modify orders, subject to restrictions.%Limits on modification. Ratelimits, message limits etc. GFD etc - FOK FAK explained later
 \end{frame}
 
 \begin{frame}{Order Matching}
-	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be at least partly satisfied by trading up to $q_{\max}=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{in cross}.
+	Whenever $(+1,q_1,\$p_1), (-1,q_2,\$p_2)\in\mathcal{L}_t$ with $p_2\leq p_1$, both orders could be at least partly satisfied by trading up to $q_{\max}=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{in cross}.
 
 	\pause
 
@@ -349,7 +353,7 @@
 \end{frame}
 
 \begin{frame}{Supply and Demand Curves}
-	Let $\mathcal{L}_t$ be the collection of all limit orders available for trading at time $t$. We can partition this into $\mathcal{L}_t = \mathcal{B}_t\cup\mathcal{A}_t$, with $\mathcal{B}_t$ the bid orders and $\mathcal{A}_t$ the ask orders.
+	We can partition $\mathcal{L}_t$ into $\mathcal{L}_t = \mathcal{B}_t\cup\mathcal{A}_t$, with $\mathcal{B}_t$ the bid orders and $\mathcal{A}_t$ the ask orders.
 
 	\pause
 
@@ -403,23 +407,27 @@
 \end{frame}
 
 \begin{frame}{Order Timing}
-	\begin{block}{Match Time Randomisation}
-		Because the order book is often visible to all participants, traders wishing to hide their intentions or make use of all available information may be incentivised to wait until immediately before the match time to post orders.
+	The order book is often visible to all participants. Traders may be incentivised to wait until immediately before the match time to post orders.%Hiding intentions, using all information available
 
-		To minimise computational throughput requirements for the matching engine, and give more information to all traders, the match time is typically chosen at random in some short interval in order to disincentivise this behaviour.
+	\pause
 
+	If everyone does this, the matching engine may be overloaded, and $p^*_t$ will change very rapidly leading up to $t^*$.
+
+	\pause
+
+	The match time is typically chosen at random in some short interval in order to disincentivise this behaviour.
+	\pause
+	To further encourage early submission of orders, many exchanges also implement a time priority rule.%As opposed to pro rata
+	\begin{block}{Time Priority}
+		If two orders exist at the same price $\$p$, the one that reached the matching engine later cannot be matched unless the earlier order is completely filled.
 	\end{block}
 
 	\pause
 
-	\begin{block}{Time Priority}
-		To further encourage early submission of orders, many exchanges also implement a time priority rule.%As opposed to pro rata
+	\begin{block}{Tick Size}
+		Time priority would not have much effect if we could just insert the later order at a price $\$p+s\epsilon$ for some very small $\epsilon>0$.%Because of price priority. "Diming"
 
-		If two orders exist at the same price $\$p$, the one that reached the matching engine later cannot be matched unless the earlier order is completely filled.
-
-		This would not have much effect if we could just insert the later order at a price $\$p+s\epsilon$ for some very small $\epsilon>0$.%"Diming"
-
-		To avoid this, prices are only allowed to be integer multiples of some small dollar value $\$\delta$, known as the \textbf{tick size}.%Sub-penny rule reg nms
+		To avoid this, prices must be integer multiples of some small increment $\$\delta$, known as the \textbf{tick size}.%Sub-penny rule reg nms
 	\end{block}
 \end{frame}
 
@@ -455,10 +463,12 @@
 	If we aggressively trade a very large quantity, we will exhaust all passive orders we would most prefer to trade with and $\mathcal{M}_t$ will need to include orders at worse price levels. This is sometimes known as \textbf{walking the book}.
 
 	Assume continuous matching, and consider a market order of $q>0$ units in direction $s$. The least favourable price in $\mathcal{M}_t$ will be given by
-	$$\$P_t(sq) = s\min_\{(\$p : Q_t(-s,p)\geq q\} \$sp.$$
+	$$\$P_t(sq) = s\min_{\{\$p : Q_t(-s,p)\geq q\}} \$sp.$$
 	The unit price of the match will be given by
 	$$\$p^*_t(sq) = \frac{1}{q}\int_0^q \$P_t(sq')dq'.$$
+\end{frame}
 
+\begin{frame}{Price Impact Curve}
 	We call the prices
 	\begin{align*}
 		\$b_t	&= \lim_{q\to0^+} \$p^*_t(-q)	&&= \max_{(+1,q,\$p)\in\mathcal{B}_t} \$p
