@@ -69,7 +69,7 @@
 \begin{frame}{Securities Markets and Exchanges}
 	The \textbf{\textcolor{blue}{market}} is the collective activity of all traders. When we don't care who we trade with, we can just `trade with the market'.
 
-	A \textbf{\textcolor{red}{securities} \textcolor{blue}{market}} for some asset $A$, open at a time $t$, is any \textcolor{red}{standardised} \textcolor{blue}{way for traders to reach agreements to buy or sell} $A$ at a specified \textbf{settlement time} $T\geq t$. %"securities" because of standardisation and regulation
+	A \textbf{\textcolor{red}{securities} \textcolor{blue}{market}} for some asset $A$, open at a time $t$, is any \textcolor{red}{standardised} \textcolor{blue}{way for traders to reach agreements to buy or sell} $A$ at a specified \textbf{settlement time} $T\geq t$. %"securities" because of standardisation and regulation. Agreements are often treated as the same as trades, though there are some cases where the distinction matters
 
 	\pause
 
@@ -231,7 +231,7 @@
 \end{frame}
 
 \begin{frame}{Leverage}
-	Suppose we can always make any trade we like at time $t$ with price $\$p_t$.
+	Suppose we can always make any trade we like at time $t$ with price $\$p_t$. %Not a terrible guess if we did indeed make some trade at $\$p_{t_i}$.
 
 	Then we can freely convert a portfolio with value $\$\Pi_t$ to that much in cash.
 
@@ -307,9 +307,12 @@
 \begin{frame}{Trade Formation}
 	In practice, the trades we can make at a time $t$ and a price $p_t$ are limited by our ability to find a willing counterparty.
 
+	\pause
 	On an electronic exchange, trades are formed by interacting with the exchange's \textbf{matching engine}.%Matching engine is a computer networked with the computers of exchange participants
 
 	For each trade $(s,q,\$p)$, the exchange will typically charge a fee proportional to the \textbf{dollar volume} $\$pq$ of the trade. Fee rates may vary depending on trade type and between participants in accordance with exchange policy.
+
+	\pause
 
 	The most common type of matching engine design is a \textbf{limit-order book} (sometimes called a double auction), which can operate in either a \textbf{continuous} or \textbf{batched} fashion.
 \end{frame}
@@ -324,83 +327,108 @@
 	All limit orders are collected into a \textbf{limit-order book}.
 
 	Users can add, cancel and modify orders, subject to restrictions.%Limits on modification. Ratelimits, message limits etc. GFD etc - FOK FAK explained later
+\end{frame}
 
-	\pause
-
-	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be at least partly satisfied by trading up to $q_\max=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{in cross}.
+\begin{frame}{Order Matching}
+	Whenever the book contains orders $(+1,q_1,\$p_1), (-1,q_2,\$p_2)$ with $p_2\leq p_1$, both orders could be at least partly satisfied by trading up to $q_{\max}=\min(q_1,q_2)$ units with one another at a price $\$p\in[\$p_2,\$p_1]$. If such a pair exists the book is said to be \textbf{in cross}.
 
 	\pause
 
 	If an order $(s,q,\$p)$ is in cross with another, it may be \textbf{matched} for $q'$ units. The total matched quantity for all buy orders must equal the total matched quantity for all sell orders.
 
+	\pause
+
 	In this case, $q'$ units will trade, and the order will become $(s,q-q',\$p)$.
+
+	\pause
 
 	If $q=q'$ the order is said to be \textbf{fully filled} and will be removed from the book. Otherwise, it is said to be \textbf{partially filled}.
 
+	\pause
 	The ability to quickly find matches for a large number of units at a reasonable price is known as \textbf{liquidity}, and is another major benefit of centralisation.
 \end{frame}
 
-\begin{frame}{Batch Matching}
+\begin{frame}{Supply and Demand Curves}
 	Let $\mathcal{L}_t$ be the collection of all limit orders available for trading at time $t$. We can partition this into $\mathcal{L}_t = \mathcal{B}_t\cup\mathcal{A}_t$, with $\mathcal{B}_t$ the bid orders and $\mathcal{A}_t$ the ask orders.
+
+	\pause
 
 	Now define the functions
 	\begin{align*}
-		Q_t(+1,\$p)	&&= \sum_{(+1,q',\$p') \in \mathcal{B}_t : \$p\leq \$p'} q'
-		Q_t(-1,\$p)	&&= \sum_{(-1,q',\$p') \in \mathcal{A}_t : \$p\geq \$p'} q'
-		M_t(\$p)	&&= \min(Q_t(+1,\$p),Q_t(-1,\$p))
+		Q_t(+1,\$p)	&= \sum_{\substack{(+1,q',\$p') \in \mathcal{B}_t \\ \$p\leq \$p'}} q'
+	\\	Q_t(-1,\$p)	&= \sum_{\substack{(-1,q',\$p') \in \mathcal{A}_t \\ \$p\geq \$p'}} q'
+	\\	M_t(\$p)	&= \min(Q_t(+1,\$p),Q_t(-1,\$p))
 	\end{align*}
+	\pause
 	The functions $Q_t(-1,\$p)$ and $Q_t(+1,\$p)$ are known as the \textbf{supply curve} and \textbf{demand curve} respectively. The function $M_t(\$p)$ represents the \textbf{matchable quantity} at $\$p$.
+	\pause
 	The book $\mathcal{L}_t$ is in cross if and only if there exists some $\$p$ with $M_t(\$p)>0$.
+	%Diagram. separate slide
+\end{frame}
 
+\begin{frame}{Batch Matching}
 	In \textbf{batch} or \textbf{auction} style matching, orders are matched with one another only at particular discrete times.
 
+	\pause
+
 	\begin{enumerate}
-		\item Prior to the \textbf{match time} $t*$, users can typically add, modify and cancel limit orders.
-		\item At each time $t\leq t*$, an \textbf{indicative price} $\$p*_t$ will be selected such that $M_t(\$p*_t)$ is maximal. Tiebreaking will depend on exchange rules.
-		\item Finally, at the match time $t*$, some subset of the crossed limit orders will be matched at $\$p*$ for a total quantity $M_{t*}(\$p*_{t*})$. After the match, the book will no longer be crossed.
+		\item Prior to the \textbf{match time} $t^*$, users can typically add, modify and cancel limit orders.
+		\item At each time $t\leq t^*$, an \textbf{indicative price} $\$p^*_t$ will be selected such that $M_t(\$p^*_t)$ is maximal. Tiebreaking will depend on exchange rules.
+		\item Finally, at the match time $t^*$, some subset of the crossed limit orders will be matched at $\$p^*$ for a total quantity $M_{t^*}(\$p^*_{t^*})$. After the match, the book will no longer be crossed.
 	\end{enumerate}
 
-	Assuming a constant fee rate, maximising $M_t(\$p*_t)$ will maximise the dollar value of exchange fees. It is also equivalent to maximising the sum of $qm$ across all orders, where $q$ is the quantity filled and $m$ is the price improvement.
+	\pause
 
+	Maximising $M_t(\$p^*_t)$ is equivalent to maximising the sum of $qm$ across all orders, where $q$ is the quantity filled and $m$ is the price improvement.%Also maximises fees paid
+
+	It is common to use this matching style at the beginning or end of a trading day or lunch break, or when there is some kind of market instability such as following a large price move or company announcement. Sometimes $t^*$ is referred to as a \textbf{liquidity event} because of the large volume traded, and the relative insensitivity of $\p^*_{t^*}$ to inidividual orders.%Price impact nonnegative because of monotonicity property
+\end{frame}
+
+\begin{frame}{Batch Matching Properties}
 	The following monotonicity properties typically hold:
 	\begin{itemize}
-		\item $\$p*_t$ nondecreasing in $\mathcal{B}_t$ and nonincreasing in $\mathcal{A}_t$
+		\item $\$p^*_t$ nondecreasing in $\mathcal{B}_t$ and nonincreasing in $\mathcal{A}_t$
 		\item For each $\$p$, $M_t(\$p)$ nondecreasing in $\mathcal{L}_t$
-		\item For individual orders $(s,q,\$p)$, we will have $\$p*_t$ nondecreasing in $\$p$ and $sq$. The sensitivity of $\$p*_{t*}$ to $\$p,sq$ is known as \textbf{instantaneous price impact}.
+		\item For individual orders $(s,q,\$p)$, we will have $\$p^*_t$ nondecreasing in $\$p$ and $sq$. The sensitivity of $\$p^*_{t^*}$ to $\$p,sq$ is known as \textbf{instantaneous price impact}.
 		\item For individual orders $(s,q,\$p)$ and each $\$p'$, we will have $M_t(\$p')$ nondecreasing in $q$ and nondecreasing in $\$sp$.
 	\end{itemize}
+
+	\pause
 
 	\begin{block}{Price Priority}
 		Because $M_t(\$p')$ is nondecreasing in $sp$, the matching will be designed to obey \textbf{price priority}.
 	
 		If we have two orders $(s_1,q_1,\$p_1), (s_2,q_2,\$p_2)$ with $\$s_1p_1 > \$s_2p_2$, then the second order cannot be matched unless the first is completely filled.
 	\end{block}
+\end{frame}
 
-	It is common to use this matching style at the beginning or end of a trading day or lunch break, or when there is some kind of market instability such as following a large price move or company announcement. The match time is sometimes referred to as a \textbf{liquidity event} because of the large volume traded, and the relative insensitivity of trade price to order quantity.%Price impact nonnegative because of monotonicity property
-
+\begin{frame}{Order Timing}
 	\begin{block}{Match Time Randomisation}
 		Because the order book is often visible to all participants, traders wishing to hide their intentions or make use of all available information may be incentivised to wait until immediately before the match time to post orders.
 
 		To minimise computational throughput requirements for the matching engine, and give more information to all traders, the match time is typically chosen at random in some short interval in order to disincentivise this behaviour.
 
 	\end{block}
+
+	\pause
+
 	\begin{block}{Time Priority}
-		To further encourage early submission of orders, many exchanges also implement a time priority rule.
+		To further encourage early submission of orders, many exchanges also implement a time priority rule.%As opposed to pro rata
 
 		If two orders exist at the same price $\$p$, the one that reached the matching engine later cannot be matched unless the earlier order is completely filled.
 
-		This would have minimal effect if we could just insert the later order at a price $\$p+s\epsilon$ for some very small $\epsilon>0$.
+		This would not have much effect if we could just insert the later order at a price $\$p+s\epsilon$ for some very small $\epsilon>0$.%"Diming"
 
-		To avoid this, prices are only allowed to be integer multiples of some small dollar value, known as the \textbf{tick size}.
+		To avoid this, prices are only allowed to be integer multiples of some small dollar value $\$\delta$, known as the \textbf{tick size}.%Sub-penny rule reg nms
 	\end{block}
 \end{frame}
 
 \begin{frame}{Continuous Matching}
 	In \textbf{continuous matching}, a match time is triggered every time a new limit order causes the book to become crossed.
 
-	If the matching engine receives an order at $t$, then immediately before and after $t$ the book will be uncrossed.
+	If the matching engine receives an order at $t$, then immediately before and after $t$ the book will be uncrossed, with $M_t(\$p)=0$ at all $\$p$.
 
-	The only orders involved in the match will be the arriving order and some set of orders $\mathcal{M}_t$ in the opposite direction. The arriving order is known as the \textbf{active} or \textbf{aggressive} order, and the pre-existing orders are known as \textbf{passive}. %Also known as taker and maker orders. Sometimes have different fees
+	The only orders involved in the match will be the arriving order and some set of orders $\mathcal{M}_t$ in the opposite direction. The arriving order is known as the \textbf{active} or \textbf{aggressive} order, and the pre-existing orders are known as \textbf{passive}. Price priority is still used, and time priority is usually used. %Also known as taker and maker orders. Sometimes have different fees
 
 	% Passive orders provide liquidity to anybody who wants to trade. This liquidity goes away when traded against, so latency matters. Adverse selection comes into play here
 
@@ -411,28 +439,61 @@
 	For each $q'$ matched against a passive order $(s,q,\$p)$, the active order will trade $q'$ units with the passive order at $\$p$. %No price improvement for passive orders
 
 	The per-unit price achieved by the active trader will be
-	$$\frac{\sum_{(s,q,\$p)\in\mathcal{M}_t} \$pq}{\sum_{(s,q,\$p)\in\mathcal{M}_t} q}.$$ %This may or may not be a multiple of the tick size.
+	$$\$p^*_t = \frac{\sum_{(s,q,\$p)\in\mathcal{M}_t} \$pq}{\sum_{(s,q,\$p)\in\mathcal{M}_t} q}.$$ %This may or may not be a multiple of the tick size.
 
-	%FAK,FOK
 	%Market orders
 	%Usually used for intraday trading
+
 	% order priority -> latency -> colocation, fpgas.
-
-	%Limit orders are options provided to other market participants -> price impact curve -> liquidity
-	
-	$$P_t(sq) = s\max_\{(p : Q_t(s,p)\geq q\} sp$$
-
-
-	If I want to immediately trade $q$ units at time $t$ in some direction $s$ ``with the market'', I require that
-	$$\sum_{(-s,q',p')\in\mathcal{L}_t}q' \geq q.$$
-	The price I pay will depend on which orders I match with and for how many units. We can denote the best such price as
-	$$p_t(sq) = $$
-
-	If $p_t(sq)$ is the best price I can get by 
-
-
 	%adverse selection -> order priority. + free messages -> tick size, min size, lot size, ratelimits.
 	% "Certainly, the modern compendium of mental illnesses (DSM-5) takes a dim view of people who think everyone is out to get them. Yet financial markets are different: people really are out to get you, after all." - Agustin Lebron, The Laws of Trading
+
+	%FAK,FOK
+\end{frame}
+
+\begin{frame}{Price Impact}
+	If we aggressively trade a very large quantity, we will exhaust all passive orders we would most prefer to trade with and $\mathcal{M}_t$ will need to include orders at worse price levels. This is sometimes known as \textbf{walking the book}.
+
+	Assume continuous matching, and consider a market order of $q>0$ units in direction $s$. The least favourable price in $\mathcal{M}_t$ will be given by
+	$$\$P_t(sq) = s\min_\{(\$p : Q_t(-s,p)\geq q\} \$sp.$$
+	The unit price of the match will be given by
+	$$\$p^*_t(sq) = \frac{1}{q}\int_0^q \$P_t(sq')dq'.$$
+
+	We call the prices
+	\begin{align*}
+		\$b_t	&= \lim_{q\to0^+} \$p^*_t(-q)	&&= \max_{(+1,q,\$p)\in\mathcal{B}_t} \$p
+	\\	\$a_t	&= \lim_{q\to0^+} \$p^*_t(q)	&&= \min_{(-1,q,\$p)\in\mathcal{A}_t} \$p
+	\end{align*}
+	the \textbf{bid price} and \textbf{ask price} respectively. All bid orders have price at most $\$b_t$ and all ask orders have price at least $\$a_t$.
+
+	To trade an infinitesimal amount, we would need to sell at $\$b_t$ or buy at $\$a_t$.
+
+	The interval $[\$b_t,\$a_t]$ is known as the \textbf{spread}, and $\$a_t-\$b_t$ is the \textbf{width} of the spread.%Proxy for liquidity
+
+	\pause
+
+	Observe that $\$p^*_t(0)$ is not yet defined. So long as we choose some price $\$m_t$ satisfying $\$m_t\in[\$b_t,\$a_t]$, setting $\$p^*_t(0) := \$m_t$ will make $\$p^*_t(\cdot)$ nondecreasing. This is variously called the \textbf{theo}retical price, \textbf{microprice} or \textbf{price proxy} depending on context.
+
+	Some choices for $m_t$ include:
+	\begin{itemize}
+		\item $\frac{1}{2}b_t+\$\frac{1}{2}a_t$ (arithmetic \textbf{midprice})
+		\item $\$b_t^\frac{1}{2}a_t^\frac{1}{2}$ (\textbf{geometric midprice})
+		\item $\$(1-I(\$d))b_t + \$I(\$d)a_t$ (depth-$\$d$ \textbf{weighted midprice}), where $I(\$d)=\frac{Q(+1,\$b_t-\$d)}{Q(+1,\$b_t-\$d)+Q(-1,\$a_t+\$d)}$ is the depth-$\$d$ \textbf{imbalance} (usually $\$d=\$0$)
+		\item $\$b_t^{1-I(\$d)}a_t^I(\$d)$ (depth-$\$d$ \textbf{geometrically weighted midprice})
+	\end{itemize}
+
+	%bouchaud justification for weighted mid. Most general case is probably: correlated random walks with nonconstant but identical drift,variation
+
+	We call the difference $\lambda_t(sq) = \$p^*_t(sq) - \$m_t$ the \textbf{instantaneous price impact} of trading $q$ units in direction $s$. Buy orders will have nonnegative instantaneous price impact, while sell orders will have nonpositive instantaneous price impact.%Captures everything about liquidity on an immediate timescale
+
+	%Square root law of market impact
+	%Gatheral may 19 2016 three models of (persistent) price impact
+		%Continuous time propagator: price impact decays according to G()
+		%Square root process
+		%Alfonso Fruth and Schied: I think the idea is that the shape of the order book above the ask stays the same but the ask changes
+		%Locally linear order book
+		%Manipulation and transaction-triggered manipulation
+		%Optimal liquidation under each model
 \end{frame}
 
 \begin{frame}{Market Data \& Market Prices}
@@ -440,7 +501,7 @@
 	% Theoretical value
 		% Efficiency
 			%Edge
-				%Latency (is this immoral somehow)
+				%Latency. If you think this is dumb, design a better market that doesnt incentivise it. Hayek quote relevant here
 				%PFOF
 				%Good pricing
 				%Smart order placement (queue rules)
@@ -490,8 +551,12 @@
 \section{Portfolio Management}
 \begin{frame}{Uncertainty}
 	%Dutch books & FTAP & Q vs P quant. Complete markets, arrow securities. Effects of incompleteness?
+		%Dutch books bayes rule?
 	%(No-)Arbitrage (buy low sell high. Setup for statarb later)
-	%Problems with the notion of probability: 1. estimation (P) 2. market incompleteness (Q) 3. risk premia (Q->P)
+	%Problems with the notion of probability: 1. estimation (P) 2. market incompleteness (Q) 3. risk premia (Q->P). "All models are wrong" George Box
+	%Knightian uncertainty vs quantifiable
+	%Estimation problems
+		%Empirical risk minimisation
 \end{frame}
 
 \begin{frame}{Decision-Making}
@@ -505,7 +570,9 @@
 	% Trading is zero-sum. So why do we do it
 	% Risk = variance
 		% "Cars have brakes so you can drive faster." Ben Rady
+		% Quadratic utility justification. 
 	% Portfolio variance and covariance
+		%Hedging
 \end{frame}
 
 \begin{frame}{Decision Theory}
@@ -556,12 +623,36 @@
 			% Fama macbeth
 \end{frame}
 
+\begin{frame}{$\alpha$}
+	%Spanned vs orthogonal
+	%Feature engineering
+		%Decays
+	%ML
+		%Overfitting
+			%Regularisation
+			%Kitchen sink regression
+		%Types
+			%Linear
+			%Trees
+			%Neural nets
+			%KNN
+			%Genetic algo
+			%RL
+				%Bellman
+		%Hyperparams
+			%Gaussian processes
+		%Interpretability
+			%Peter cotton's point
+\end{frame}
+
 \begin{frame}{Statistical Arbitrage}
 	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
 \end{frame}
 
 \section{Options Trading}
 	%If black scholes was true options markets wouldnt exist
+
+	%Importance of moneyness as opposed to eg treating options as separate tickers with stationary returns
 
 	% Linear regression mathematics
 		% Matrix multiplication
@@ -572,7 +663,7 @@
 \section{Appendix}
 \begin{frame}{Proof Sketch for $\mathfrak{c}_T$ Identity}
 	\begin{align*}
-		\\	c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
+			c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
 		\\				&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
 		\\				&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
 		\\				&					&&= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- d\mathfrak{p}
@@ -593,11 +684,36 @@
 
 \begin{frame}{Stuff I missed}
 	% Data cleaning
+		%Corporate actions
+			% Dividends
+			%Stock split, reverse stock split
+			%M&A, spinoff
+			%Rights issues, tender offer, warrant issue
+			%Exchange offer
+			%Public offering, share buyback
+			%Share buyback
+			%Liquidation
+			%Delisting
+			%Debt to equity conversion
 	% How to find alpha
 	% How to get a job
+	% How to talk to people - traders dont all think so mathematically
 	% "People without dirty hands are wrong."
-	% Survivorship bias / lookahead bias
+	%Data leakage
+		% Survivorship bias / lookahead bias
+			%Delisting
+		% Corrections added later
+		% Redactions or ongoing missingness (the knowledge that it still hasnt been released)
 	% Execution algos - TWAP VWAP
-	% Dividends
+	%Backtesting
+		%Crossvalidation
+		%Walkforward
+		%Market impact calibration against live
+		%Borrow costs
+	%Software design
+		%Reproducibility
+		%Backtest vs production differences
+	%What is a "trading strategy"? What does one "look like"?
+		%It's easier to model how markets go right than how they go wrong. All happy families are alike
 \end{frame}
 \end{document}
