@@ -40,6 +40,19 @@
 \begin{frame}{About Me}
 \end{frame}
 
+\begin{frame}{Point of This Talk}
+	%mathematical language. why
+		%lotta moving parts. ambiguities can add up
+		%ill give the economic intuition behind things anyway
+	%increasingly lowfreq and highfreq trading styles are converging. common basis needed
+	%axiomatic like euclid
+	%not talking how to get job. in efficient market the way to get job is just to be good at the work
+	%Not directly talking about how to do the job either
+		%The kind of rigour here is about precise communication of the concepts.
+			%Communication at work focuses much more on concrete facts, relies on greater implicit shared context.
+			%Many of the best traders would have no idea what you mean if you just speak in maths
+		%The work itself is often extremely heuristic by necessity. The ability to appreciate which parts of the problem are most important represent things in a simple way while capturing the important qualitative parts is a key skill in both manual and systematic trading
+\end{frame}
 % Table of contents
 \begin{frame}{Outline}
 	\tableofcontents
@@ -47,19 +60,18 @@
 	%% Make sure := for definitions
 \end{frame}
 
-% Section 1
 \section{Securities Markets}
 
 \begin{frame}{Spot Transactions}
 	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.%Counterexample: currency triangles
 
-	If I give you $q>0$ units of some asset $A$, and you give me $\$p$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
+	If I give $q>0$ units of some asset $A$, and you give me $\$p$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
 	\begin{itemize}
 		\item I have \textbf{sold} $q$ units of $A$ to you at $\frac{\$p}{q}$
 		\item You have \textbf{bought} $q$ units of $A$ from me for $\frac{\$p}{q}$
 	\end{itemize} %"for" and "at" indicate direction
 
-	Buying and selling are collectively called `trading'.
+	Buying and selling are collectively called `trading'.%One trade can have multiple counterparties, we will see this later
 
 	Suppose I own some amount of $A$ and some amount of money. If we let $s$ be $+1$ for buying and $-1$ for selling, then the result of any trade is to add $qs$ to the amount of $A$ I own, and add $-qps$ to the amount of money I have. %s is called the sign of the trade
 
@@ -121,23 +133,24 @@
 	Centralisation generally reduces \textbf{search costs} and \textbf{counterparty risk}. %Mention risk counterexample: FTX vs a DEX
 \end{frame}
 
-\begin{frame}{Settlement and Clearing}
-	\begin{block}{Netting}
-		Centralisation allows for \textbf{netting} of rights and obligations.
+\begin{frame}{Netting}
+	Centralisation allows for \textbf{netting} of rights and obligations.
 
-		For any settlement time $T$, I only need to keep track of the difference between money owed to and by me, and units owed to and by me.
+	For any settlement time $T$, I only need to keep track of the difference between money owed to and by me, and units owed to and by me.
 
-		The quantity of $A$ owned by me, plus the quantity owed to me, minus the quantity owed by me to others, is known as my \textbf{net position} in $A$. If this is positive, I have a \textbf{long position}. If it is negative, I have a \textbf{short position}. If it is zero, I am \textbf{flat}.
-	\end{block}
+	The quantity of $A$ owned by me, plus the quantity owed to me, minus the quantity owed by me to others, is known as my \textbf{net position} in $A$.
 
-	\begin{block}{Collateralisation}
-		At certain intermediate times $t'$ ($t\leq t'\leq T$), participants may be required to physically give (`post') something to the exchange to \textbf{collateralise} their obligations.
-		\begin{itemize}
-			\item Money (`margin') %Explain the term "futures type settlement" and "stock type settlement"
-			\item Assets (`locate'/`borrow') %"Borrow" is only if you don't own the thing
-		\end{itemize}
-		If an agreement made on the exchange gives you rights to money or assets, this is typically as good as posting actual money or assets.
-	\end{block}
+	If this is positive, I have a \textbf{long position}. If it is negative, I have a \textbf{short position}. If it is zero, I am \textbf{flat}.
+\end{frame}
+
+\begin{frame}{Collateralisation}
+	At certain intermediate times $t'$ ($t\leq t'\leq T$), participants may be required to physically give (`post') something to the exchange to \textbf{collateralise} their obligations.
+	\begin{itemize}
+		\item Money (`margin') %Explain the term "futures type settlement" and "stock type settlement"
+		\item Assets (`locate'/`borrow') %"Borrow" is only if you don't own the thing
+	\end{itemize}
+	If an agreement made on the exchange gives you rights to money or assets at $T$, this is typically as good as posting actual money or assets for an obligation at $T'\geq T$.
+	%Interest rates, borrow rates etc
 \end{frame}
 
 \begin{frame}{Summary}
@@ -171,35 +184,35 @@
 
 	Suppose further that $p_t$ is a right-continuous function $\mathbb R\to\mathbb R$ with left-limits.
 
-	For instance, we could take $p_t = p_{\max \left(\tau\cap (-\infty,t]\right)}$ for $t\geq \min\tau$ and $p_t=x$ otherwise for some arbitrary $x$. %Last traded price
-
+	For instance, we could take $p_t = p_{\max \left(\tau\cap (-\infty,t]\right)}$ for $t\geq \min\tau$ and $p_t=x$ otherwise for some arbitrary $x$. This is known as the last traded price.
 \end{frame}
 
 \begin{frame}{Accounting}
-	Let $c_t^+, a_t^+, p_t^+$ be the right-limits and $c_t^-, a_t^-, p_t^-$ the left-limits of $c_t,a_t, p_t$ respectively.
+	For any time-varying quantity $x_t$, let $x_t^+$ and $x_t^-$ denote the right- and left-limits respectively.
+
+	Furthermore, define a signed measure $x_\omega$ such that for any interval $T'=[t_-',t_+']$ we have
+	$$x_{T'} := x_{t_+}^+ - x_{t_-}^-.$$
 
 	\pause
 
-	Define measures $\mathfrak{a}_\omega, \mathfrak{c}_\omega, \mathfrak{p}_\omega$ such that for any interval $T'=[t_-',t_+']$ we have
-	$$\mathfrak{a}_{T'} := a_{t_+'}^+-a_{t_-'}^-, \mathfrak{c}_{T'} := c_{t_+'}^+-c_{t_-'}^-, \mathfrak{p}_{T'} := p_{t_+'}^+-p_{t_-'}^-.$$
 	Then we have
 
 	\vspace{-0.06\textheight}
 	\begin{align*}
-		a_{t_+'}^+ - a_{t_-'}^-	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} d\mathfrak{a},
-	\\	c_{t_+'}^+ - c_{t_-'}^-	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t d\mathfrak{a},
-	\\	p_{t_+'}^+ - p_{t_-'}^- &= p_{t_+'} - p_{t_-'}^-.		&&= \int_{t\in T} d\mathfrak{p}.
+		a_{T'}	&= \sum_{t\in \tau} s_t q_t		&&= \int_{t\in T} da,
+	\\	c_{T'}	&= \sum_{t\in \tau} - p_t (s_t q_t)	&&= \int_{t\in T} - p_t da,
+	\\	p_{T'}	&= p_{t_+'} - p_{t_-'}^-.		&&= \int_{t\in T} dp.
 	\end{align*}%Special case: t_-'=t_+'
 \end{frame}
 
 \begin{frame}{Cash Holdings}
 	It can be shown (see appendix) that the cashflow over the entire interval $T=[t_-,t_+]$ is
-	$$c_{t_+} - c_{t_-} = \int_{t\in T} - p_t d\mathfrak{a} = p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.$$
+	$$\$c_T = \int_{t\in T} - \$p_t da = \$p_{t_-}a_{t_-} - \$p_{t_+}a_{t_+} + \$\int_{t\in T} a_t^- dp.$$
 	This is similar in spirit to integration by parts:
 	$$\int_a^b f \frac{dg}{dx} dx = f(b)g(b)-f(a)g(a) - \int_a^b g \frac{df}{dx} dx.$$
 
 	Then we have
-	$$(c_{t_+} + p_{t_+}a_{t_+}) - (c_{t_-} + p_{t_-}a_{t_-}) = \int_{t\in T} a_t^- dp.$$
+	$$\$(c_{t_+} + p_{t_+}a_{t_+}) - (c_{t_-} + p_{t_-}a_{t_-}) = \$\int_{t\in T} a_t^- dp.$$
 
 	The quantity $\$v_t = \$p_t a_t$ is known as the \textbf{dollar value} of our $A$ holdings \textbf{marked} to the price $\$p_t$.%Marking just means multiplication of units held by a unit price
 \end{frame}
@@ -213,7 +226,7 @@
 
 	We can write
 	$$(c_{t_+} + p_{t_+} \cdot a_{t_+}) - (c_{t_-} + p_{t_-} \cdot a_{t_-}) = \int_{t\in T} a_t^- \cdot dp,$$
-	where $p$ is now a vector-valued measure. \pause Let
+	where $p_\omega$ is now a vector-valued measure. \pause Let
 	$$\Pi_t	= c_t + p_t\cdot a_t = c_t + \sum v_t.$$
 
 	We call $\$\Pi_t$ the \textbf{value} of our portfolio \textbf{marked} to $p_t$.
@@ -222,12 +235,10 @@
 \begin{frame}{Profitability}
 	The quantity $\$\Pi_{t_+} - \$\Pi_{t_-}$ is our \textbf{net P\&L} (profit and loss) over the interval $T$, marked to $p_t$.
 	Then we have
-	$$\Pi_{t_+} - \Pi_{t_-} = \int_{t\in T} a_t^- \cdot dp.$$
-	Introducing a measure
-	$$\pi_{T'} := \Pi_{t_+'}^+ - \Pi_{t_-'}^-,$$
+	$$\Pi_T	= \int_{t\in T} a_t^- \cdot dp.$$
 	we can write
-	$$\Pi_{t_{i+1}} - \Pi_{t_i} = \int_{t\in [t_i, t_{i+1}]} d\pi = a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
-	where $\frac{dp}{p_t^-}$ is the elementwise quotient.
+	$$\Pi_{[t_i,t_{i+1}]} = \int_{[t_i,t_{i+1}]} a_t^- \cdot dp = \int_{t\in [t_i, t_{i+1}]} v_t^- \cdot \frac{dp}{p_t^-},$$
+	where the quotient $\frac{dp}{p_t^-}$ is computed elementwise.
 \end{frame}
 
 \begin{frame}{Leverage}
@@ -241,46 +252,39 @@
 
 	\pause
 
-	Typically, $\Pi_t$ can change in two ways: trading assets, or transferring cash into and out of the portfolio. We will generally ignore the possibility of transfers.
+	Typically, $\$\Pi_t$ can change in two ways: trading assets, or transferring cash into and out of the portfolio. We will generally ignore the possibility of transfers.
 
 	\pause
 
 	If we begin with a portfolio worth $\$\Pi_{t_1}$ and make a sequence of trades of the form $(s_t,q_t,p_t)$ that result in a portfolio worth $\$\Pi_{t_n}$, then we could instead begin with a portfolio worth $L \$\Pi_{t_1}$ and make trades $(s_t, L q_t, p_t)$ to arrive at a portfolio worth $L \$\Pi_{t_n}$. The ratio $L$ is known as the \textbf{leverage ratio}.
 \end{frame}
 
-\begin{frame}{Returns}
-	Because we typically need money to collateralise some fraction of unsettled trades and short borrow, and hold assets instead of cash, portfolio management requires capital that cannot be used elsewhere.
+\begin{frame}{Return on Capital}
+	Because of collateralisation requirements, portfolio management uses up cash.
 
-	In the case of long-only spot-settled trading, if we were to turn our portfolio into cash, or convert cash into an identical portfolio, we would receive/require $\$\Pi_t$.
+	Consider long-only spot-settled trading. If we were to turn our portfolio into cash, or convert cash into an identical portfolio, we would receive/require $\$\Pi_t$.\footnote{We generally want $c_t$ to be small, but we may want some spare cash for trading, so it still forms part of the collateralisation requirement.}%For a long-short portfolio with no borrow costs, the collateral requirement is generally at least $c_t + \vert a_t\vert \cdot c_t$. The calculations are different for margined trading eg futures. Complexity i wont go into. Maybe appendix?
+
+	%To judge trading efficiency, we might want an estimate for how much extra P\&L over the interval $T$ would result from a marginal dollar added to $\$\Pi_t$.
+	\pause
+
+	If our initial portfolio value were $\$\Pi_{t_-}+\$N$ instead of $\Pi_{t_-}$, and we could simply scale up trade sizes at the same prices, then set
+	$$L = \frac{\Pi_{t_-}+N}{\Pi_{t_-}}.$$
 
 	\pause
 
-	Consequently, to judge the efficiency of our trading, we might want an estimate for how much extra P\&L over the interval $T$ would result from a marginal dollar added to $\$\Pi_t$.
-
-	\pause
-
-	If our initial portfolio value were $\$\Pi_{t_-}+\$N$ instead of $\Pi_{t_-}$, and we could simply scale up trade sizes at the same prices, then setting
-	$$L = \frac{\Pi_{t_-}+N}{\Pi_{t_-}}$$
-	means our new P\&L would simply be $L \int_T d\pi$.
-
-	\pause
-
-	The increase in P\&L per dollar added to initial portfolio value is then
-	$$R_T = \frac{L \int_T d\pi - \int_T d\pi}{N} = \frac{\int_T d\pi}{\Pi_{t_-}}.$$
-	We call $R_T$ the \textbf{return} on the initial portfolio value.
+	The \textbf{return on capital} is defined as the increase in P\&L per dollar added to initial portfolio value, i.e.
+	$$R_T = \frac{L \int_T d\Pi - \int_T d\Pi}{N} = \frac{\int_T d\Pi}{\Pi_{t_-}}.$$
 \end{frame}
 
 \begin{frame}{Log Returns}
 	If we define
 	$$\ell_t = \log \Pi_t$$ %sometimes called log-wealth
-	and a measure $\mathfrak{l}_\omega$ satisfying
-	$$\mathfrak{l}_{[t_-',t_+']}= \ell_{t_+'}^+ - \ell_{t_-'}^-$$
 	for any $t_-',t_+'$, then we have
-	$$R_T = \exp(\mathfrak{l}_T) - 1,$$
+	$$R_T = \exp(\ell{l}_T) - 1,$$
 	and for any measurable set $\omega$ we can define
-	$$R_\omega = \exp(\mathfrak{l}_\omega) - 1 \approx \mathfrak{l}_\omega + O(\mathfrak{l}_\omega^2)\textrm{ (for small }\mathfrak{l}_\omega\textrm{)}.$$
+	$$R_\omega = \exp(\ell_\omega) - 1 \approx \ell_\omega + O(\ell_\omega^2)\textrm{ (for small }\ell_\omega\textrm{)}.$$
 
-	We call $\mathfrak{l}_T$ the \textbf{log-return} over the interval $T$.
+	We call $\ell_T$ the \textbf{log-return} over the interval $T$.
 \end{frame}
 
 \begin{frame}{Properties of Returns and Log-Returns}
@@ -293,8 +297,8 @@
 	is known as the \textbf{asset returns} vector over $T'$. In contrast, $\ell_{T'}$ is not linear in $r_{T'}$. %In fact there's no function of the return that \ell_{T'} is linear in. Benefits and drawbacks, eg expectation/variance
 
 	For a disjoint collection of measurable sets $\omega_1,\ldots\omega_n$ whose union is $\Omega$, we have
-	$$\ell_\Omega = \sum_{i=1}^n \ell_{\omega_i},$$
-	$$R_\Omega = \left(\prod_{i=1}^n (1+R_{\omega_i})\right) - 1 \approx \sum_{i=1}^n R_{\omega_i} + O\left(\sum_{i=1}^n\sum_{j=1}^n \vert R_{\omega_i} R_{\omega_j} \vert\right).$$
+	$$\ell_\Omega & &= \sum_{i=1}^n \ell_{\omega_i},$$
+	$$R_\Omega &= \left(\prod_{i=1}^n (1+R_{\omega_i})\right) - 1 &\approx \sum_{i=1}^n R_{\omega_i} + O\left(\sum_{i=1}^n\sum_{j=1}^n \vert R_{\omega_i} R_{\omega_j} \vert\right).$$
 \end{frame}
 
 \begin{frame}{Summary}
@@ -328,9 +332,9 @@
 
 	\pause
 
-	All limit orders active at time $t$ are collected into a \textbf{limit-order book} $\mathcal{L}_t$.
+	All limit orders active at time $t$ are collected into a \textbf{limit-order book} $\mathcal{L}_t$. By convention, $\mathcal{L}_t$ is right-continuous with left limits.%multiset
 
-	Users can add, cancel and modify orders, subject to restrictions.%Limits on modification. Ratelimits, message limits etc. GFD etc - FOK FAK explained later
+	Users can add, cancel and modify orders, subject to exchange-specific rules.%Limits on modification. Ratelimits, message limits etc. GFD etc - FOK FAK explained later
 \end{frame}
 
 \begin{frame}{Order Matching}
@@ -385,7 +389,7 @@
 
 	Maximising $M_t(\$p^*_t)$ is equivalent to maximising the sum of $qm$ across all orders, where $q$ is the quantity filled and $m$ is the price improvement.%Also maximises fees paid
 
-	It is common to use this matching style at the beginning or end of a trading day or lunch break, or when there is some kind of market instability such as following a large price move or company announcement. Sometimes $t^*$ is referred to as a \textbf{liquidity event} because of the large volume traded, and the relative insensitivity of $\p^*_{t^*}$ to inidividual orders.%Price impact nonnegative because of monotonicity property
+	It is common to use this matching style at the beginning or end of a trading day or lunch break, or when there is some kind of market instability such as following a large price move or company announcement. Sometimes $t^*$ is referred to as a \textbf{liquidity event} because of the large volume traded, and the relative insensitivity of $\$p^*_{t^*}$ to individual orders.%Price impact nonnegative because of monotonicity property
 \end{frame}
 
 \begin{frame}{Batch Matching Properties}
@@ -393,7 +397,7 @@
 	\begin{itemize}
 		\item $\$p^*_t$ nondecreasing in $\mathcal{B}_t$ and nonincreasing in $\mathcal{A}_t$
 		\item For each $\$p$, $M_t(\$p)$ nondecreasing in $\mathcal{L}_t$
-		\item For individual orders $(s,q,\$p)$, we will have $\$p^*_t$ nondecreasing in $\$p$ and $sq$. The sensitivity of $\$p^*_{t^*}$ to $\$p,sq$ is known as \textbf{instantaneous price impact}.
+		\item For individual orders $(s,q,\$p)$, we will have $\$p^*_t$ nondecreasing in $\$p$ and $sq$. %The sensitivity of the match price to the parameters of the individual order is known as the instantaneous price impact.
 		\item For individual orders $(s,q,\$p)$ and each $\$p'$, we will have $M_t(\$p')$ nondecreasing in $q$ and nondecreasing in $\$sp$.
 	\end{itemize}
 
@@ -434,17 +438,27 @@
 \begin{frame}{Continuous Matching}
 	In \textbf{continuous matching}, a match time is triggered every time a new limit order causes the book to become crossed.
 
+	\pause
+
 	If the matching engine receives an order at $t$, then immediately before and after $t$ the book will be uncrossed, with $M_t(\$p)=0$ at all $\$p$.
 
-	The only orders involved in the match will be the arriving order and some set of orders $\mathcal{M}_t$ in the opposite direction. The arriving order is known as the \textbf{active} or \textbf{aggressive} order, and the pre-existing orders are known as \textbf{passive}. Price priority is still used, and time priority is usually used. %Also known as taker and maker orders. Sometimes have different fees
+	\pause
+
+	The only orders involved in the match will be the arriving order and some set of orders $\mathcal{M}_t$ in the opposite direction.
+
+	The arriving order is known as the \textbf{active} or \textbf{aggressive} order, and the pre-existing orders are known as \textbf{passive}.%Also known as taker and maker orders. Sometimes have different fees
+
+	Typically we are not allowed to match with ourselves. Often the exchange will implement \textbf{self-trade protection} so that the quantity of our active and passive orders is simply cancelled out without recording a trade.
+
+	Price priority is still used, and time priority is usually used.
 
 	% Passive orders provide liquidity to anybody who wants to trade. This liquidity goes away when traded against, so latency matters. Adverse selection comes into play here
 
 	\pause
 
-	Unlike auction-style matching, there may be multiple trade prices according to the prices of the passive orders.
+	For each $q'$ matched against a passive order $(s,q,\$p)$, the active order will trade $q'$ units with the passive order at $\$p$. %Unlike auction-style matching, there may be multiple trade prices according to the prices of the passive orders. No price improvement for passive orders
 
-	For each $q'$ matched against a passive order $(s,q,\$p)$, the active order will trade $q'$ units with the passive order at $\$p$. %No price improvement for passive orders
+	\pause
 
 	The per-unit price achieved by the active trader will be
 	$$\$p^*_t = \frac{\sum_{(s,q,\$p)\in\mathcal{M}_t} \$pq}{\sum_{(s,q,\$p)\in\mathcal{M}_t} q}.$$ %This may or may not be a multiple of the tick size.
@@ -459,43 +473,136 @@
 	%FAK,FOK
 \end{frame}
 
-\begin{frame}{Price Impact}
+\begin{frame}{Instantaneous Price Impact}
 	If we aggressively trade a very large quantity, we will exhaust all passive orders we would most prefer to trade with and $\mathcal{M}_t$ will need to include orders at worse price levels. This is sometimes known as \textbf{walking the book}.
 
-	Assume continuous matching, and consider a market order of $q>0$ units in direction $s$. The least favourable price in $\mathcal{M}_t$ will be given by
+	\pause
+
+	Assume continuous matching, and consider a market order of $q>0$ units in direction $s$.
+
+	\pause
+	The least favourable price in $\mathcal{M}_t$ will be given by
 	$$\$P_t(sq) = s\min_{\{\$p : Q_t(-s,p)\geq q\}} \$sp.$$
+
+	\pause
+
 	The unit price of the match will be given by
 	$$\$p^*_t(sq) = \frac{1}{q}\int_0^q \$P_t(sq')dq'.$$
+
+	We call the sensitivity of $\$p^*_t$ to $sq$ the \textbf{instantaneous price impact}.%Sometimes known as transient price impact
 \end{frame}
 
-\begin{frame}{Price Impact Curve}
+\begin{frame}{Bid-Ask Spread}
 	We call the prices
 	\begin{align*}
 		\$b_t	&= \lim_{q\to0^+} \$p^*_t(-q)	&&= \max_{(+1,q,\$p)\in\mathcal{B}_t} \$p
 	\\	\$a_t	&= \lim_{q\to0^+} \$p^*_t(q)	&&= \min_{(-1,q,\$p)\in\mathcal{A}_t} \$p
 	\end{align*}
-	the \textbf{bid price} and \textbf{ask price} respectively. All bid orders have price at most $\$b_t$ and all ask orders have price at least $\$a_t$.
+	the \textbf{bid price} and \textbf{ask price} respectively. All bid orders have price at most $\$b_t$ and all ask orders have price at least $\$a_t$.%To trade an infinitesimal amount, we would need to sell at $\$b_t$ or buy at $\$a_t$.
 
-	To trade an infinitesimal amount, we would need to sell at $\$b_t$ or buy at $\$a_t$.
+	The interval $[\$b_t,\$a_t]$ is known as the \textbf{spread}, and $\$a_t-\$b_t$ is the \textbf{width} of the spread. If $\$a_t-\$b_t=\$\delta$, we say that the market for the asset is \textbf{large-tick} or \textbf{tick-constrained}.%Proxy for liquidity
 
-	The interval $[\$b_t,\$a_t]$ is known as the \textbf{spread}, and $\$a_t-\$b_t$ is the \textbf{width} of the spread.%Proxy for liquidity
+	%Cross-listing arbitrage (incl. fees) when spreads are disjoint (union of L_t and L_t' is 'in cross'). We can perform the matching ourselves and possibly make money net of fees
+		%PFOF
+		%Collateralisation considerations - often not netted
+		%Latency risk
+\end{frame}
+
+\begin{frame}{Price Proxies}
+	Note that $\$p^*_t(0)$ is not yet defined. So long as we choose some price $\$m_t$ satisfying $\$m_t\in[\$b_t,\$a_t]$, setting $\$p^*_t(0) := \$m_t$ will make $\$p^*_t(\cdot)$ nondecreasing.
 
 	\pause
 
-	Observe that $\$p^*_t(0)$ is not yet defined. So long as we choose some price $\$m_t$ satisfying $\$m_t\in[\$b_t,\$a_t]$, setting $\$p^*_t(0) := \$m_t$ will make $\$p^*_t(\cdot)$ nondecreasing. This is variously called the \textbf{theo}retical price, \textbf{microprice} or \textbf{price proxy} depending on context.
+	This is variously called the \textbf{theo}retical price, \textbf{microprice} or \textbf{price proxy} depending on context.
 
-	Some choices for $m_t$ include:
+	\pause
+
+	Some simple choices for $m_t$ include:
 	\begin{itemize}
 		\item $\frac{1}{2}b_t+\$\frac{1}{2}a_t$ (arithmetic \textbf{midprice})
-		\item $\$b_t^\frac{1}{2}a_t^\frac{1}{2}$ (\textbf{geometric midprice})
-		\item $\$(1-I(\$d))b_t + \$I(\$d)a_t$ (depth-$\$d$ \textbf{weighted midprice}), where $I(\$d)=\frac{Q(+1,\$b_t-\$d)}{Q(+1,\$b_t-\$d)+Q(-1,\$a_t+\$d)}$ is the depth-$\$d$ \textbf{imbalance} (usually $\$d=\$0$)
-		\item $\$b_t^{1-I(\$d)}a_t^I(\$d)$ (depth-$\$d$ \textbf{geometrically weighted midprice})
+		\item $\$\sqrt{b_ta_t}$ (\textbf{geometric midprice})
+		\item $\$(1-I_t)b_t + \$I_ta_t$ (depth-$\$d$ \textbf{weighted midprice})
+		\item $\$b_t^{1-I_t}a_t^{I_t}$ (depth-$\$d$ \textbf{geometrically weighted midprice})
 	\end{itemize}
+	We call $I_t$ the \textbf{book imbalance}.
 
-	%bouchaud justification for weighted mid. Most general case is probably: correlated random walks with nonconstant but identical drift,variation
+	\pause
 
-	We call the difference $\lambda_t(sq) = \$p^*_t(sq) - \$m_t$ the \textbf{instantaneous price impact} of trading $q$ units in direction $s$. Buy orders will have nonnegative instantaneous price impact, while sell orders will have nonpositive instantaneous price impact.%Captures everything about liquidity on an immediate timescale
+	A popular choice for this is
+	$$I_t=\frac{Q_t(+1,\$b_t)}{Q_t(+1,\$b_t)+Q_t(-1,\$a_t)}.$$
 
+	Alternative price proxies are described in the appendix.
+	% Microstructural noise -> Roll model
+\end{frame}
+
+\begin{frame}{Persistent Price Impact}
+	We call the difference $\$\lambda_t(sq) = \$p^*_t(sq) - \$m_t$ the \textbf{instantaneous price impact curve} of trading $q$ units in direction $s$.%Captures absolutely everything about liquidity on an immediate timescale
+
+	Buy orders will have nonnegative instantaneous price impact, while sell orders will have nonpositive instantaneous price impact.
+
+	\pause
+
+	Because aggressive trades remove liquidity from one side of the book, there is also a persistent effect on $\mathcal{L}_t$ and consequently $\$m_t$. This is known as \textbf{persistent price impact}.
+
+	\pause
+
+	The realised instantaneous price impact is given by
+	$$\$\lambda_t = \$p_t - \$m_t,$$
+	while the realised persistent price impact is given by
+	$$\$\nu_t = \$m_t - \$m_t^\emptyset,$$
+	where $\$m_t^\emptyset$ is the path the microprice process would have taken had we not interacted at all with the matching engine.
+\end{frame}
+
+\begin{frame}{P\&L with transaction costs}
+	We can write $\$p_t = \$m_t^\emptyset + \$\nu_t + \$\lambda_t.$
+
+	\pause
+
+	\begin{align*}
+		\$\Pi_T	&= \$\int_{t\in T} a_t^- (dm+dn+d\lambda)
+	\\		&= \underbrace{\$\int_{t\in T} a_t^- dm}_{\textrm{Midprice P\&L}} - \underbrace{\$\int_{t\in T} \nu_t da}_{\textrm{PPI Penalty}} - \underbrace{\$\int_{t\in T} \lambda_t da}_{\textrm{IPI Penalty}}
+	\\		& + \underbrace{\$((\nu_{t_+} + \lambda_{t_+})a_{t_+} - (\nu_{t_-} + \lambda_{t_-})a_{t_-})}_{\$0\textrm{ if }a_{t_+}=a_{t_-}=0}.
+	\end{align*}
+
+	\pause
+
+	Attempts to make $\nu_t$ and $da$ covary negatively are very hard to pull off and usually considered manipulative.%Large trading company was recently fined by indian regulator for something like this; in particular they allegedly made use of cross-asset impact
+
+	But if we only use passive execution, it is guaranteed that $\lambda_t$ and $da$ will covary negatively, and this term will change from a loss to a profit. Trying to make money solely from this term is known as \textbf{market making} or \textbf{liquidity provision}.
+\end{frame}
+
+\begin{frame}{Downsides of Market Making}
+	Assuming $a_{t_-}=a_{t_+}=0$,
+	$$\$\Pi_T	&= \underbrace{\$\int_{t\in T} a_t^- dm}_{\textrm{Midprice P\&L}} - \underbrace{\$\int_{t\in T} \nu_t da}_{\textrm{PPI Penalty}} - \underbrace{\$\int_{t\in T} \lambda_t da}_{\textrm{IPI Penalty}}.$$
+
+	\pause
+
+	With a market-making strategy, we lose a lot of control over $a_t^-$.
+
+	\pause
+
+	If market participants in general is making money on this term we will tend to lose money. This tendency is referred to as \textbf{adverse selection}.
+
+	\pause
+
+	In particular, if the priority of our orders are quite low, we will only trade against the aggressive orders with the largest quantity, which tend to be most predictive of midprice changes over a short time horizon. High order priority is therefore extremely valuable for a market making strategy.
+
+	\pause
+
+	However, it is still possible to make money on both terms. This is particularly true if $a_t$ changes relatively slowly (\textbf{low-frequency trading}). Whether this results in better performance overall is a different question.
+\end{frame}
+
+\begin{frame}{Market Making Strategy}
+	A highly simplified model of optimal market making is given by Avellaneda and Stoikov (2008). The market maker maintains two limit orders at any time in opposite directions, of the form
+	$$\left(s, 1, \$\left(m_t - \gamma q - \frac{1}{2}s\varsigma)\right)\right),$$
+	where $\gamma$ is a risk-aversion parameter\footnote{Defined differently in the paper} and $\varsigma$ is the difference between the two prices.
+	%It was in vogue to use something like this for on-chain crypto market making, often subsidised by the creator of the crypto asset. Not necessarily with the intention of making money, but just because liquidity and trade volumes reinforce one another
+
+	In general, to avoid large $a_t$, (which would make our P\&L very sensitive to price changes), we want the amount we buy to match the amount we sell. %Bouchaud et. al. (when?) use point process models
+\end{frame}
+
+\begin{frame}{Market Impact Modeling}
+	% Amihud measure? average of |r_day|/daily_volume
 	%Square root law of market impact
 	%Gatheral may 19 2016 three models of (persistent) price impact
 		%Continuous time propagator: price impact decays according to G()
@@ -504,6 +611,11 @@
 		%Locally linear order book
 		%Manipulation and transaction-triggered manipulation
 		%Optimal liquidation under each model
+	%Paleologo 11.1.1
+	%Effect of latency on slippage
+	%Illiquidity premium
+
+	%Ritter et al 2022 optimisation with linear price impact. cited in paleologo 11.3
 \end{frame}
 
 \begin{frame}{Market Data \& Market Prices}
@@ -525,48 +637,22 @@
 				%Better UI -> algos and humans work together
 				%Market access / cross-market synthesis
 				%Statistical anomalies/mispricing
-		% Liquidity
-			% Decomposition of p&l into theo and execution
-			% Market maker as liquidity provider
-			% Amihud measure? average of |r_day|/daily_volume
-
-	% Price Proxies
-		% LTP
-			% Price chart. Various position charts.
-			% Microstructural noise -> Roll model
-		% Midprice, geometric mid
-			% Still noisy
-		% Weighted mid
 
 	% "lit" exchange just means more market data is made public
-
-	% Order book diagram
-
-\end{frame}
-
-\begin{frame}{Transaction Costs}
-	% Fees
-	% Spreads
-	% Persistent price impact
-
-	% Augmented P&L integral
-
-	% Market impact
-		% Adverse selection
-		% Trade volumes and liquidity reinforce each other
-
-	%Market making liquidity provision. Avellaneda Stoikov, Crypto AMMs
 \end{frame}
 
 \section{Portfolio Management}
 \begin{frame}{Uncertainty}
-	%Dutch books & FTAP & Q vs P quant. Complete markets, arrow securities. Effects of incompleteness?
+	%Dutch books & FTAP & Q vs P quant.
+		%Polymarket example
 		%Dutch books bayes rule?
+	%Complete markets, arrow securities. Effects of incompleteness?
 	%(No-)Arbitrage (buy low sell high. Setup for statarb later)
 	%Problems with the notion of probability: 1. estimation (P) 2. market incompleteness (Q) 3. risk premia (Q->P). "All models are wrong" George Box
 	%Knightian uncertainty vs quantifiable
 	%Estimation problems
 		%Empirical risk minimisation
+	%VNM
 \end{frame}
 
 \begin{frame}{Decision-Making}
@@ -576,6 +662,12 @@
 		% “We’re mediocre traders, but our system never has rows with its girlfriends — that’s the kind of thing that causes patterns in markets.” Nick Patterson RenTech
 \end{frame}
 
+\begin{frame}{Compounding}
+	%kelly theory
+		%Fractional kelly due to uncertainty in estimation. paleologo 13.3
+		%ignores capacity constraints / transaction costs
+\end{frame}
+
 \begin{frame}{Risk}
 	% Trading is zero-sum. So why do we do it
 	% Risk = variance
@@ -583,15 +675,15 @@
 		% Quadratic utility justification. 
 	% Portfolio variance and covariance
 		%Hedging
+			%Adverse selection justification for hedging
 \end{frame}
 
-\begin{frame}{Decision Theory}
+\begin{frame}{Portfolio Selection}
 	%Markowitz frontier
 	%Pareto optimality
 	%Security market line
 	%Markowitz solution
 		%Estimation difficulties
-	%VNM & kelly theory
 \end{frame}
 
 \begin{frame}{Capital Asset Pricing Model}
@@ -637,6 +729,7 @@
 	%Spanned vs orthogonal
 	%Feature engineering
 		%Decays
+		%Winsorise or squash
 	%ML
 		%Overfitting
 			%Regularisation
@@ -652,6 +745,7 @@
 		%Hyperparams
 			%Gaussian processes
 		%Interpretability
+			%Good because there are way too many possible research paths and we need a handle on whats going on in order to direct ourselves
 			%Peter cotton's point
 \end{frame}
 
@@ -671,13 +765,13 @@
 		% Diagnosing issues with the model eg because black scholes is wrong ("all models are wrong")
 
 \section{Appendix}
-\begin{frame}{Proof Sketch for $\mathfrak{c}_T$ Identity}
+\begin{frame}{Proof Sketch for $c_T$ Identity}
 	\begin{align*}
-			c_{t_+} - c_{t_-}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
-		\\				&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
-		\\				&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
-		\\				&					&&= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- d\mathfrak{p}
-		\\				&					&&= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- d\mathfrak{p}.
+			c_{T}	&= \sum_{t\in\tau} - p_t (s_t q_t)	&&= \sum_{i=1}^n - p_{t_i} (a_{t_i}^+-a_{t_i}^-) = - \sum_{i=1}^n p_{t_i} a_{t_i}^+ + \sum_{i=1}^n p_{t_i} a_{t_i}^-
+		\\		&					&&= - \sum_{i=1}^{n-1} p_{t_i} a_{t_{i+1}}^- - p_{t_n} a_{t_n}^+ + \sum_{i=1}^{n-1} p_{t_{i+1}} a_{t_{i+1}}^- + p_{t_1}a_{t_1}^-
+		\\		&					&&= p_{t_1}a_{t_1}^- + - p_{t_n} a_{t_n}^+ + \sum_{i=2}^n (p_{t_i}-p_{t_{i-1}}) a_{t_i}^-
+		\\		&					&&= p_{t_1}a_{t_1}^- - p_{t_n}a_{t_n}^+ + \int_{t\in[t_1,t_n]} a_t^- dp
+		\\		&					&&= p_{t_-}a_{t_-} - p_{t_+}a_{t_+} + \int_{t\in T} a_t^- dp.
 	\end{align*}
 \end{frame}
 
@@ -689,6 +783,20 @@
 	The \textbf{arithmetically annualised return} over $\omega$ is $R_\omega \frac{\textrm{1 year}}{\lambda_\omega}$. %Approximately same. A bit less meaningful
 
 	%All dimensionless
+\end{frame}
+
+\begin{frame}{Alternative Price Proxies}
+	More generally, we can define the depth-$\$d$ imbalance,
+	$$I_t(\$d)=\frac{Q_t(+1,\$b_t-\$d)}{Q_t(+1,\$b_t-\$d)+Q_t(-1,\$a_t+\$d)}.$$%Takes into account information from more levels of the book
+
+	\pause
+
+	We can also define an \textbf{exponentially weighted imbalance},
+	$$I_t(\alpha) = $$%Takes into account the entire book
+
+	Some microprices with more theoretical backing are discussed in the appendix.
+
+	%bouchaud justification for weighted mid. Most general case is probably: correlated random walks with nonconstant but identical drift,variation
 \end{frame}
 
 
@@ -720,6 +828,7 @@
 		%Walkforward
 		%Market impact calibration against live
 		%Borrow costs
+		%Rademacher anti serum
 	%Software design
 		%Reproducibility
 		%Backtest vs production differences
