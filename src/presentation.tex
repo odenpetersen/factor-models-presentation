@@ -150,7 +150,8 @@
 		\item Assets (`locate'/`borrow') %"Borrow" is only if you don't own the thing
 	\end{itemize}
 	If an agreement made on the exchange gives you rights to money or assets at $T$, this is typically as good as posting actual money or assets for an obligation at $T'\geq T$.
-	%Interest rates, borrow rates etc
+
+	Some amount of interest may be charged to make up for the difference between the size of our obligations and the size of our collateral. For cash, this is according to an \textbf{interest rate}; for other assets, it is according to a \textbf{borrow rate}/\textbf{short rate}.
 \end{frame}
 
 \begin{frame}{Summary}
@@ -629,7 +630,6 @@
 				%Smart order placement (queue rules)
 				%Rebates
 					%Fee asymmetries
-				%Large balance sheet -> higher risk tolerance
 				%Funding asymmetry (better funding rates)
 				%Alt data
 				%Human input -> see things algos dont
@@ -643,6 +643,35 @@
 
 \section{Portfolio Management}
 \begin{frame}{Uncertainty}
+	An \textbf{event} is a set of possible worlds distinguished from other possible worlds by some common feature.
+
+	For instance, there is a set of possible worlds where Australia wins its next game of cricket against the UK.
+
+	Suppose $\Omega$ is the set of all events.\footnote{We require that $\Omega$ be a $\sigma$-algebra.} At each time $t'$, we can construct a set $\mathcal{F}_{t'}\subseteq \Omega$ containing all events whose outcome is known at time $t'$.\footnote{$\mathcal{F}_t$ is a filtration, i.e. a nondecreasing $\sigma$-algebra}
+
+	An \textbf{Arrow-Debreu security} $A_\omega$ for $\omega\in \mathcal{F}_t$ is one which we can exchange at time $t$ for $\$1$ if $\omega$ occurs and $\$0$ otherwise. Assume there exists $t$ such that $\omega\in\mathcal{F}_t$.
+
+	Let $\$\mathbb{Q}_{t'}(\omega)$ be the market price of $\omega$ at time $t'\leq t$. Assume unlimited liquidity, no fees, and no collateral requirements or interest payments.
+
+	The market is \textbf{arbitrage-free} if there is no fixed set of trades that guarantees positive P\&L.
+
+	Assuming this is the case, we can deduce properties that $\mathbb{Q}_{t'}(\cdot)$ must satisfy.
+
+	\begin{block}{$\mathbb{Q}_{t'}(\omega) \in [0,1]$}
+		If $\mathbb{Q}_{t'}(w)<0$, we would actually receive money by buying $A_\omega$, and we can sell it at $t$ for at least $\$0$. This would guarantee positive P\&L.
+
+		If $\mathbb{Q}_{t'}(w)>1$, we could short $A_\omega$, and buy it back at $t$ for at most $\$1$. This would guarantee positive P\&L.
+	\end{block}
+
+	If $\omega_1$ and $\omega_2$ are disjoint sets, we say they are \textbf{mutually exclusive events}.
+	\begin{block}{$\mathbb{Q}_{t'}(\omega_1) + \mathbb{Q}_{t'}(\omega_2) = \mathbb{Q}_{t'}(\omega_1 \cup \omega_2)$}
+		If the LHS exceeds the RHS, we buy $A_{\omega_1},A_{\omega_2}$ and short $A_{\omega_1\cup\omega_2}$; otherwise, we do the reverse.
+	\end{block}
+
+	In an arbitrage-free market, $\mathbb{Q}_{t'}(\cdot)$ obeys the Kolmogorov axioms, and is therefore a \textbf{probability measure} on $\mathcal{F}_t$.%Kolmogorov (1950)
+
+	If $\mathbb{Q}_{t'}(\omega_1)+\mathbb{Q}(\omega_2)$ exceeds $\mathbb{Q}_{t'}$
+
 	%Dutch books & FTAP & Q vs P quant.
 		%Polymarket example
 		%Dutch books bayes rule?
@@ -666,6 +695,7 @@
 	%kelly theory
 		%Fractional kelly due to uncertainty in estimation. paleologo 13.3
 		%ignores capacity constraints / transaction costs
+	%Large balance sheet -> higher risk tolerance
 \end{frame}
 
 \begin{frame}{Risk}
@@ -679,6 +709,7 @@
 \end{frame}
 
 \begin{frame}{Portfolio Selection}
+	%Usually we like convex problems and especially quadratic programs
 	%Markowitz frontier
 	%Pareto optimality
 	%Security market line
