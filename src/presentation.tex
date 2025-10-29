@@ -597,25 +597,26 @@
 	A highly simplified model of optimal market making is given by Avellaneda and Stoikov (2008). The market maker maintains two limit orders at any time in opposite directions, of the form
 	$$\left(s, 1, \$\left(m_t - \gamma q - \frac{1}{2}s\varsigma)\right)\right),$$
 	where $\gamma$ is a risk-aversion parameter\footnote{Defined differently in the paper} and $\varsigma$ is the difference between the two prices.
-	%It was in vogue to use something like this for on-chain crypto market making, often subsidised by the creator of the crypto asset. Not necessarily with the intention of making money, but just because liquidity and trade volumes reinforce one another
+	%It has been popular to use something like this for on-chain crypto market making, often subsidised by the creator of the crypto asset. Not necessarily with the intention of making money, but just because liquidity and trade volumes reinforce one another
 
 	In general, to avoid large $a_t$, (which would make our P\&L very sensitive to price changes), we want the amount we buy to match the amount we sell. %Bouchaud et. al. (when?) use point process models
 \end{frame}
 
 \begin{frame}{Market Impact Modeling}
-	%Square root law of market impact
-	%Gatheral may 19 2016 three models of (persistent) price impact
-		%Continuous time propagator: price impact decays according to G()
-		%Square root process
-		%Alfonso Fruth and Schied: I think the idea is that the shape of the order book above the ask stays the same but the ask changes
-		%Locally linear order book
-		%Manipulation and transaction-triggered manipulation
-		%Optimal liquidation under each model
-	%Paleologo 11.1.1
-	%Effect of latency on slippage
-	%Illiquidity premium
+	A very simple model for $\nu_t$ takes the form
+	$$\nu_t = \int_0^t f(s_{t'}q_{t'})G(t-t')dt',$$
+	for some $f,G:\mathbb{R}\to\mathbb{R}$. This is known as a \textbf{propagator model}.
 
-	%Ritter et al 2022 optimisation with linear price impact. cited in paleologo 11.3
+	Persistent impact is empirically seen to obey a \textbf{square-root law} (due to Grinold and Kahn, 1994),
+	$$\nu \propto \alpha\sigma\frac{\int da}{\sqrt{V \vert \int da\vert}},$$
+	where $\sigma$ is the typical variance of returns and $V$ is the typical volume over the period.
+
+	Gatheral (2016) derives this from a variety of different models of market impact.
+
+	Recall that our P\&L from persistent price impact is given by 
+	$$-\$\int_{t\in T} \nu_t da.$$
+	Most reasonable market impact models are said not to admit price manipulation, in the sense that if $a_{t_-}=a_{t_+}=0$, this number cannot be positive.
+	%Paleologo 11.1.1
 \end{frame}
 
 \section{Asset Pricing}
@@ -676,6 +677,7 @@
 \end{frame}
 
 \section{Portfolio Management}
+% "Cars have brakes so you can drive faster." Ben Rady
 \begin{frame}{Utility}
 	We now consider events relating to our P\&L.
 
@@ -712,7 +714,7 @@
 	The Kelly utility of our P\&L over some interval $T$ is given by
 	$$u_T = \ell_T = \log(1 + R_T)$$
 	In practice, it may make sense to use the more conservative \textbf{fractional Kelly criterion},
-	$$u_T = \log(1 +\frac{R_T}{L}),$$
+	$$u_T = \log\left(1 +\frac{R_T}{L}\right),$$
 	where $L\in [0,1]$ is a leverage parameter.%Some reasons: serial autocorrelation of returns, estimation uncertainty, greater risk aversion, returns decay as portfolio grows because of capacity
 
 	For small values of $\frac{R_T}{L}$, we can approximate this using a Taylor expansion:
@@ -744,7 +746,6 @@
 	known as the \textbf{Sharpe ratio}, subject to $\mathrm{Var}[R_{T'}]$ having some desired positive value. %Security market line
 
 	The problem of maximising expected returns subject to an upper bound on returns variance is known as \textbf{Markowitz portfolio optimisation}.%Kelly has a lot of assumptions, this might be a bit more interpretable.
-	% "Cars have brakes so you can drive faster." Ben Rady
 	%Usually we like convex problems and especially quadratic programs
 
 	%Diagram: efficient frontier and security market line
@@ -781,15 +782,15 @@
 	There are certain common factors that jointly influence all stocks.
 
 	In the Capital Asset Pricing Model (CAPM), due initially to Treynor (1961), the returns\footnote{Traditionally, these are excess returns relative to some benchmark interest rate.} on the $j$th asset over $T_i$ are given by
-	$$r_{T_i}^j = \underbrace{\beta^j}_{\textrm{Asset Sensitivity}} \underbrace{f_{T_i}-\mathbb{E}[f_{T_i}]}_{\textrm{Market Return}} + \underbrace{\alpha^j + \sigma^j\epsilon_{T_i}^j}_{\textrm{Idiosyncratic Return}},$$ 
-	where $\epsilon_{T_i}^j$ have mean zero and unit variance, and are uncorrelated with the $f_{T_i}$ and with each other.
+	$$r_i^j = \underbrace{\beta^j}_{\textrm{Asset Sensitivity}} \underbrace{f_i-\mathbb{E}[f_i]}_{\textrm{Market Return}} + \underbrace{\alpha^j + \sigma^j\epsilon_i^j}_{\textrm{Idiosyncratic Return}},$$ 
+	where $\epsilon_i^j$ have mean zero and unit variance, and are uncorrelated with the $f_i$ and with each other.
 
 	We have
 	\begin{align*}
 		\Sigma	&= \beta \Sigma_f \beta^\top + \Sigma_\epsilon,
 	\\	\mu	&= \alpha,
 	\end{align*}
-	where $\alpha,\beta$ are populated by $\alpha^j,\beta^j$, $\Sigma_\epsilon$ is a diagonal matrix with entries $\sigma^j^2$, and $\Sigma^f$ is the variance of $f_{T_i}$.
+	where $\alpha,\beta$ are populated by $\alpha^j,\beta^j$, $\Sigma_\epsilon$ is a diagonal matrix with entries $\sigma^j^2$, and $\Sigma^f$ is the variance of $f_i$.
 
 	Let $H_\beta=\beta (\beta^\top \beta)^{-1}\beta^\top$ be the projection matrix onto the span of $\beta$. Then
 	$$\alpha = \underbrace{H_\beta\alpha}_{\textrm{Spanned}} + \underbrace{(I-H_\beta) \alpha}_{\textrm{Orthogonal}} = \beta \alpha^\beta + \alpha^\bot,$$
@@ -807,34 +808,34 @@
 
 	Assuming $\sigma^j<\sigma^{\max}$ for all $j$, this means that $\overline{(\alpha^\top^j)^2}\to 0$ faster than $p^{-2}$.
 
-	Then $r_{T_i} = \beta ((f_{T_i}-\mathbb{E}[f_{T_i}]) + \alpha^\beta) + \sigma^j\epsilon_{T_i}^j$. We call $\alpha^\beta$ the \textbf{risk premium} of the factor.
+	Then $r_i = \beta ((f_i-\mathbb{E}[f_i]) + \alpha^\beta) + \sigma^j\epsilon_i^j$. We call $\alpha^\beta$ the \textbf{risk premium} of the factor.
 
 	%Why is risk premium equal to expected factor return
 \end{frame}
 
 \begin{frame}{Factor Models}
-	In general, we replace $\beta$ with a matrix $B$ and $f_{T_i}$ becomes a vector.
+	In general, we replace $\beta$ with a matrix $B$ and $f_i$ becomes a vector.
 
 	Then we have
-	$$r_{T_i} = B(f_{T_i}-\mathbb{E}[f_{T_i}] + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_{T_i}.$$
+	$$r_i = B(f_i-\mathbb{E}[f_i] + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_i.$$
 
-	Centering the factor returns $f_{T_i}$ will not affect the model, so we can assume $\mathbb{E}[f_{T_i}]=0$.
-	$$r_{T_i} = B(f_{T_i} + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_{T_i}.$$
+	Centering the factor returns $f_i$ will not affect the model, so we can assume $\mathbb{E}[f_i]=0$.
+	$$r_i = B(f_i + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_i.$$
 
 	Then we have
 	\begin{align*}
 		\Sigma	&= B \Sigma_f B^\top + \Sigma_\epsilon,
 	\\	\mu	&= \alpha.
 	\end{align*}
-	We say that the covariance matrix of $r_{T_i}$ is \textbf{spiked}, meaning that it is the sum of a low-rank matrix and a diagonal matrix.
+	We say that the covariance matrix of $r_i$ is \textbf{spiked}, meaning that it is the sum of a low-rank matrix and a diagonal matrix.
 
-	If we construct matrices $R,F,\alpha^\beta,\alpha^\bot,\varepsilon$ whose $i$th columns are $r_{T_i},f_{T_i},\alpha^\beta,\alpha^\bot,\epsilon_{T_i}$ respectively, then we have
+	If we construct matrices $R,F,\alpha^\beta,\alpha^\bot,\varepsilon$ whose $i$th columns are $r_i,f_i,\alpha^\beta,\alpha^\bot,\epsilon_i$ respectively, then we have
 	$$R = B(F + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\varepsilon = BF + \mathbb{E}[R] + \Sigma_\epsilon^\frac{1}{2}\varepsilon = BCC^{-1}F + \mathbb{E}[R] + \Sigma_\epsilon^\frac{1}{2}\varepsilon,$$
 	for any invertible square matrix $C$. The invariance to $C$ is sometimes called \textbf{rotational indeterminacy}.
 
 	Assuming the $\varepsilon$ are jointly normal and $B$ has linearly independent columns, the following parameter estimates are maximal likelihood:
 	\begin{align*}
-		\mathbb{E}[r_{T_i}]	&\approx \overline{R}		&= \frac{1}{n}\sum_{i=1}^n r_{T_i},
+		\mathbb{E}[r_i]	&\approx \overline{R}		&= \frac{1}{n}\sum_{i=1}^n r_i,
 	\\	F			&\approx \hat{F}		&= (B^\top \Sigma_\epsilon^{-1} B)^{-1}B^\top \Sigma_\epsilon^{-1}(R-\overline{R}),
 	\\	\varepsilon		&\appprox \hat{\varepsilon}	&= \Sigma_\epsilon^{-1} (R-\overline{R}-BF),
 	\\	\Sigma_\epsilon		&\approx \hat{\Sigma_\epsilon}	&= \frac{1}{n}(R-\overline{R}-BF)(R-\overline{R}-BF)^\top \textrm{ (with off-diagonal elements zeroed out)}.
@@ -848,24 +849,25 @@
 	To achieve this, we can use the estimate $\hat{B}_\textrm{PPCA}^{t+1}VU^\top$, where $UDV^\top$ is the SVD of $B_\textrm{PPCA}^t^\top B_\textrm{PPCA}^{t+1}$.%Problem described in Paleologo equation 7.43
 
 	If $B$ and $\Sigma_\epsilon^{-1}$ are known, an unbiased estimator for the factor covariance $\Sigma_f$ is given by $\frac{1}{n}F F^\top - (B\top \Sigma_\epsilon^{-1} B)^{-1}$.%In practice not too much uncertainty about idio vols
+		%Why ASX200 and not all ords (microstructure)
 \end{frame}
 
 \begin{frame}{Fundamental Factor Models}
 	We don't necessarily need to estimate $B$. We can use \textbf{characteristics} of the various assets. Some common choices:
-	\begin{align*}
+	\begin{itemize}
 		\item $1$ if the asset belongs to a particular country or industry, $0$ otherwise
 		\item All $1$s (equal weighting)
-	\end{align*}
+	\end{itemize}
 
 	It is also possible to extend the model to include characteristics that vary day-to-day, such as
-	\begin{align*}
+	\begin{itemize}
 		\item Realised volatility
 		\item Illiquidity (e.g. $\overline{\left(\frac{\vert \textrm{Daily Returns}\vert}{\textrm{Daily Volume}}\right)}$, due to Amihud (2002))
 		\item Crowding
 		\item Market capitalisation
 		\item Recent returns (momentum)%Capture new trends
 		\item Numbers derived from financial reports, e.g. net asset value
-	\end{align*}
+	\end{itemize}
 
 	It is usually best to ensure the characteristics are linearly independent.
 \end{frame}
@@ -874,84 +876,179 @@
 \begin{frame}{Market Efficiency}
 	If all we do is maintain a fixed portfolio, there is very little ongoing need for trading.\footnote{More precisely, $w_t$ is fixed, but $a_t=\Pi_t \frac{w_t}{p_t}$ may need to change a little as $p_t$ changes.}
 
-	If all investors do likewise, 
+	If all investors do likewise, the total dollar value invested in each asset will be proportional to the optimal $w$.
 
-	
+	However, most assets give their holder the right to potential future dividends. %Exercise: find a counterexample
+	These dividends are affected by things in the real world, which we can improve our forecast of over time.
 
-However, this would also mean prices would not reflect fair values
+	If market participants are generally good at forecasting dividends, prices will reflect dividend expectations.\footnote{The result of price impact is to make such forecasts a public good, in the microeconomic sense.}
+
+	Making such forecasts is expensive. We could instead just look at the total dollar value invested in each asset and use this to form portfolio weights, known as \textbf{passive investing}.
+
+	If everybody did this, prices would no longer reflect changes in the expectations of cashflows. This is known as the \textbf{Grossman-Stiglitz paradox}.
 \end{frame}
-	%Efficient Markets
-		%Market return should match index return?
-	%Index investing. (Stats?)
-		%Grossman-Stiglitz Paradox
 
 \begin{frame}{Edge}
-	%In order to inform trading activity, market participants receive certain data about the orders and trades on the exchange.
-	% Theoretical value
-		% Efficiency
-			%Edge
-				%Latency. If you think this is dumb, design a better market that doesnt incentivise it. Hayek quote relevant here
-				%PFOF
-				%Good pricing
-				%Smart order placement (queue rules)
-				%Rebates
-					%Fee asymmetries
-				%Funding asymmetry (better funding rates)
-				%Alt data
-				%Human input -> see things algos dont
-				%Better modelling -> see things humans dont
-				%Better UI -> algos and humans work together
-				%Market access / cross-market synthesis
-				%Statistical anomalies/mispricing
+	Price impact and fees make trading expensive. We should only do it if we think we can do better than passive investing.
 
-	% "lit" exchange just means more market data is made public
+	Reasons we might be able to do better:
+	\begin{itemize}
+		\item Responding to publicly available information faster than prices can move to reflect it
+		\item Access to multiple markets simultaneously, or ability to move information between markets faster than others%Hummingbird project
+		\item Better understanding of exchange mechanics
+		\item Access to better market data
+		\item Knowledge of proprietary datasets other than market data (`alternative data')
+		\item Access to more historical data for model estimation purposes
+		\item Knowledge of typical market dynamics (from experience)
+		\item More intelligent pricing and/or execution (e.g. intelligent placement of orders to get good queue position)
+		\item Ability to provide liquidity without losing to adverse selection, e.g. PFOF
+		\item Being able to know (or guess) who is making particular trades
+		\item Better models (to see things humans don't)
+		\item Better human traders (to see things models don't)
+		\item Better software for humans to interface with models
+		\item Better risk management
+		\item Lower taxes
+		\item More favourable terms with exchange/broker for fees, margin requirements, funding rates, borrow, etc.
+		\item Market-maker rebates from the exchange
+		\item Economies of scale
+		\item \ldots
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{$\alpha$}
-	In general, the best estimates for $\Sigma_t$ and $\mu_t$ will probably vary with time.
+\begin{frame}{Statistical Arbitrage}
+	Consider the modified factor model
+	$$r_i = Bf_i + \Theta_0\epsilon_i + \Theta_1\epsilon_{i-1} = \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]\left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right],$$
+	where $B$ is known, $f_i$ are i.i.d. with mean zero and covariance $\Sigma_f$, $\Theta_0,\Theta_1$ are known diagonal matrices, and $\epsilon_i$ are i.i.d. white noise.
 
-	Suppose that we 
+	This is an $MA(1)$ process.
 
-	%Sharpe as t test
+	We can apply a Kalman filter to forecast $r_i$. The state is
+	$$x_i = \left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right].$$
+
+	Maintain a state estimate $\hat{x}_i$ and uncertainty matrix $P_i$. Initialise $\hat{x}_i$ to zero and $P_i$ to 
+	$$\left[\begin{matrix}0 & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right].$$
+
+	The transition matrix is
+	$$F = \left[\begin{matrix}0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & I & 0\end{matrix}\right],$$
+	and the innovation covariance is
+	$$Q = \left[\begin{matrix}\Sigma_f & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right],$$
+	and so $x_i = Fx_{i-1} + Q\varepsilon_i$, where $\varepsilon$ is multivariate normal.
+
+	Defining
+	\begin{align*}
+		H		&= \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]
+	\\	\hat{x}_i'	&= F\hat{x}_{i-1},	%&= [0\\0\\ \hat{\epsilon}_{i-1}]
+	\\	P_i'		&= FP_{i-1}F^\top+Q,	%&= [\Sigma_f,0,0\\0,I,0\\0,0,P^\epsilon_{i-1}]
+	\\	y		&= r_i - H \hat{x}_i',	%&= r_i - \Theta_1 \hat{\epsilon}_{i-1}
+	\\	S		&= H P_i' H^\top,	%&= B\Sigma_f B^\top + \Theta_0\Theta_0^\top + \Theta_1 P^\epsilon_{i-1}\Theta_1^\top
+	\\	K		&= P_i' H^\top S^{-1},  %= [\Sigma_f B^\top \\ \Theta_0 \\ P^\epsilon_{i-1} \Theta_1](B\Sigma_f B^\top + \Theta_0\Theta_0^\top + \Theta_1 P^\epsilon_{i-1}\Theta_1^\top)^{-1}
+	\end{align*}
+	we then have
+	\begin{align*}
+		\hat{x}_i	&= \hat{x}_i' + K y,
+	\\	P_i		&= (I-KH)P_i'(I-KH)^\top.
+	\end{align*}
+	Finally, our forecast for $r_{i+1}$ is $HF\hat{x}_i$, and our forecast for the covariance of $r_{i+1}$ is $HF P_i F^\top H^\top + HQH^\top$.
+
+	Therefore we hold a portfolio $w = L(HFP_i F^\topH^\top + HQH^\top)^{-1} HF\hat{x}_i$.
+	%L(B\Sigma_f B^\top + \Theta_0^2 + \Theta_1 P^\epsilon_i \Theta_1)^{-1} \Theta_1 P^\epsilon_i
+	%Alpha vector \Theta_1 P^\epsilon_i. Is this orthogonal to B
+
+	%Pairs trading & vol weighting heuristic for legs
+	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
+\end{frame}
+
+\begin{frame}{Feature Engineering}
+	Variables that let us forecast the value of a \textbf{target variable} are called \textbf{features}.
+
+	As a general heuristic, we want to choose features such that the target variable will have a different mean for different values of the feature.
+
+	Especially useful are features that have nonnegligible correlation $\rho$ with the target, since we can then use a simple linear model for forecasting. However, we are not always so lucky.
+
+	Once we have raw numbers, we can create new features by applying various transformations.
+
+	\begin{itemize}
+		\item Applying a fixed nonlinear function like $\tan^{-1}$ or $x\mapsto x^2$
+		\item Setting large values of the feature to some constant (winsorisation)
+		\item Multiplying features together (interaction terms, used in Friedman's MARS)
+		\item Returning $1$ if the feature exceeds some value, $0$ otherwise (as in decision trees)
+		\item Computing a linear combination of features then applying a nonlinear transform (as in neural networks) 
+		\item Computing a weighted average of variables over time (e.g. EWMA)
+	\end{itemize}
+
+	It may be desirable to restrict ourselves to features that are \textbf{interpretable} in some way.
+
+	This can help us direct our research in a more fruitful direction.
+
+	Constraining our portfolio in accordance with an interpretable risk model is especially helpful for peace of mind out-of-sample.
+
+	However, for the purposes of $\alpha$ forecasting, it is not quite as important that our final model be fully interpretable.
+\end{frame}
+
+\begin{frame}{Signal Aggregation}
+	In general, the best estimates for $\Sigma$ and $\alpha$ should vary with time based on data relevant to the assets we are trading.
+
+	Consider a single asset $A$ with returns $r_1^A,r_2^A,\ldots r_n^A$.
+
+	Suppose we have a vector $x_i$ of many different model forecasts for $r_i^A$. Construct a \textbf{feature matrix} $X = [x_1,x_2,\ldots x_n]^\top$.
+
+	We can hold asset $j$ in proportion to some linear combination of $x_i$ given by $x_i\cdot\beta$.
+
+	Let $F=[r_1^A x_1, r_2^A x_2,\ldota r_n^A x_n]^\top$ and $\overline{F} = \frac{1}{n} \sum_{i=1}^n r_i^A x_i$.
+
+	Assuming no transaction costs, our mean quadratic loss over the entire dataset will be given by
+	$$L \overline{F} \cdot \beta - \frac{1}{2n}\beta^\top F^\top F\beta,$$
+	and the optimal $\beta$ is given by
+	$$L\left(\frac{1}{n}F^\top F\right)^{-1}\overline{F}.$$
+	%Exercise: extend to multiple assets, each with various forecasts
+
+	The portfolio return for the $i$th time period will be $R_i^A = r_i^A x_i \cdot \beta$.
+
+	%Move this to the generic portfolio optim section
+	We can compute the Sharpe ratio $\lambda = \frac{\overline{R_i^A}}{\sqrt{\overline{(R_i^A - \overline{R_i^A})^2}}}$.
+
+	If we assume that $r_1^A x_1,r_2^A x_2,\ldots$ are approximately i.i.d. normal, we will have
+	$$\frac{n(n-p)}{p(n-1)}\lambda^2 \sim F_{p,n-p}.$$
+	The test statistic will be smaller when $p$ is larger, and larger when $n$ is larger.%Kitchen Sink Regression
+
+	We can also compute the Sharpe ratio out-of-sample. Making the weaker assumption that $R_1^A,R_2^A,\ldots$ are approximately i.i.d. normal, we have
+	$$\sqrt{n}\lambda \sim t_{n-1}.$$
+
+	If we regularise the covariance matrix of $r_i^A x_i$, the in-sample distribution of $\lambda$ does not have an analytic form, but p-values can be obtained by parametric bootstrap. Bounds on the test statistic distribution are described in Issouani, Bertail and Gautherat (2024).
+
 	%Multiple testing
-
-	%Feature engineering
-		%Decays
-		%Winsorise or squash
-	%ML
 		%Overfitting
 			%Regularisation
-			%Kitchen sink regression
+				%Monotonicity constraints
 		%Types
-			%Linear
-			%Trees
-			%Neural nets
-			%KNN
 			%Genetic algo
 			%RL
 				%Bellman
 		%Hyperparams
 			%Gaussian processes
-		%Interpretability
-			%Good because there are way too many possible research paths and we need a handle on whats going on in order to direct ourselves
-			%Peter cotton's point
-\end{frame}
-
-\begin{frame}{Risk Management}
-
 \end{frame}
 
 \begin{frame}{Transaction Cost Analysis}
-	\$\Pi_T	&= \underbrace{\$\int_{t\in T} a_t^- dm}_{\textrm{Midprice P\&L}} - \underbrace{\$\int_{t\in T} \nu_t da}_{\textrm{PPI Penalty}} - \underbrace{\$\int_{t\in T} \lambda_t da}_{\textrm{IPI Penalty}}
-		%Why ASX200 and not all ords (microstructure)
+	Recall that
+	$$\$\Pi_T	= \underbrace{\$\int_{t\in T} a_t^- dm}_{\textrm{Midprice P\&L}} - \underbrace{\$\int_{t\in T} \nu_t da}_{\textrm{PPI Penalty}} - \underbrace{\$\int_{t\in T} \lambda_t da}_{\textrm{IPI Penalty}}.$$
+	
+	We can use a modified propagator model for $\nu_t+\lambda_t$,
+	$$\nu_t+\lambda_t = p_t\int_{t_-}^t \lambda p_{t'} G(t-t')da(t'),$$
+	with $G(0)=1$.
+
+	The P\&L lost to price impact is
+	$$\$\int_{t\in T} p_t \int_{t_-}^t \lambda p_{t'} G(t-t')da(t') da(t) = $\int_{t\in T} \Pi_t \int_{t_-}^t \lambda \Pi_{t'} G(t-t') dw(t') dw(t).$$
+
+	Let $dX = [0,x_2-x_1,x_3-x_2,\ldots x_n-x_{n-1}]^\top$. Furthermore, define an upper-triangular matrix $\Lambda$ whose $i,j$ entry is $\lambda G(t_j-t_i)$.
+
+	If we assume portfolio value $\$\Pi_t$ is roughly equal to a constant $\$\pi$, and ignore the contribution of $\nu_t+\lambda_t$ to P\&L variance, our quadratic utility becomes
+	$$L\overline{F} \cdot \beta - \frac{L\pi^2}{n}\beta^\top dX^\top \Lambda dX\beta - \frac{1}{2n}\beta^\top F^\top F\beta,$$
+	and the optimal $\beta$ is given by
+	$$\beta = L(\frac{2L\pi^2}{n} dX^\top \Lambda dX + \frac{1}{n}F^\top F)^{-1}\overline{F}.$$
+	Note that as $\pi\to\infty$ we have $\beta\to 0$.
 \end{frame}
 
-\begin{frame}{Statistical Arbitrage}
-	%Pairs trading & vol weighting heuristic for legs
-	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
-\end{frame}
-
-\section{Options Trading}
+%\section{Options Trading}
 	%If black scholes was true options markets wouldnt exist
 
 	%Importance of moneyness as opposed to eg treating options as separate tickers with stationary returns
