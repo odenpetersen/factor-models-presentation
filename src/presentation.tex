@@ -65,15 +65,15 @@
 \begin{frame}{Spot Transactions}
 	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.%Counterexample: currency triangles
 
-	If I give $q>0$ units of some asset $A$, and you give me $\$p$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
+	If I give $q>0$ units of some asset $A$, and you give me $\$pq$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
 	\begin{itemize}
-		\item I have \textbf{sold} $q$ units of $A$ to you at $\frac{\$p}{q}$
-		\item You have \textbf{bought} $q$ units of $A$ from me for $\frac{\$p}{q}$
+		\item I have \textbf{sold} $q$ units of $A$ to you at $\$p$
+		\item You have \textbf{bought} $q$ units of $A$ from me for $\$p$
 	\end{itemize} %"for" and "at" indicate direction
 
 	Buying and selling are collectively called `trading'.%One trade can have multiple counterparties, we will see this later
 
-	Suppose I own some amount of $A$ and some amount of money. If we let $s$ be $+1$ for buying and $-1$ for selling, then the result of any trade is to add $qs$ to the amount of $A$ I own, and add $-qps$ to the amount of money I have. %s is called the sign of the trade
+	Suppose I own some amount of $A$ and some amount of money. If we let $s$ be $+1$ for buying and $-1$ for selling, then the result of any trade is to add $qs$ to the amount of $A$ I own, and add $-\$qps$ to the amount of money I have. %s is called the sign of the trade
 
 	% Stock image of retail store
 \end{frame}
@@ -603,7 +603,6 @@
 \end{frame}
 
 \begin{frame}{Market Impact Modeling}
-	% Amihud measure? average of |r_day|/daily_volume
 	%Square root law of market impact
 	%Gatheral may 19 2016 three models of (persistent) price impact
 		%Continuous time propagator: price impact decays according to G()
@@ -619,8 +618,275 @@
 	%Ritter et al 2022 optimisation with linear price impact. cited in paleologo 11.3
 \end{frame}
 
-\begin{frame}{Market Data \& Market Prices}
-	In order to inform trading activity, market participants receive certain data about the orders and trades on the exchange.
+\section{Asset Pricing}
+\begin{frame}{Arrow-Debreu Securities}
+	An \textbf{event} is a set of possible worlds distinguished from other possible worlds by some common feature.
+
+	For instance, there is a set of possible worlds where Australia wins its next game of cricket against the UK.%Polymarket is another example
+
+	Suppose $\Omega$ is the set of all events.\footnote{We require that $\Omega$ be a $\sigma$-algebra.} At each time $t'$, we can construct a set $\mathcal{F}_{t'}\subseteq \Omega$ containing all events whose outcome is known at time $t'$.\footnote{$\mathcal{F}_t$ is a filtration, i.e. a nondecreasing $\sigma$-algebra}
+
+	An \textbf{Arrow-Debreu security} $A_\omega$ for $\omega\in \mathcal{F}_t$ is one which we can exchange at time $t$ for $\$1$ if $\omega$ occurs and $\$0$ otherwise. Assume there exists $t$ such that $\omega\in\mathcal{F}_t$.
+
+	Let $\$\mathbb{Q}_{t'}(\omega)$ be the market price of $\omega$ at time $t'\leq t$. Assume unlimited liquidity, no fees, and no collateral requirements or interest payments.
+\end{frame}
+
+\begin{frame}{Dutch Book Theorems}
+	The market is \textbf{arbitrage-free} if there is no fixed set of trades that guarantees positive P\&L in all possible worlds.
+
+	Assuming this is the case, we can deduce properties that $\mathbb{Q}_{t'}(\cdot)$ must satisfy.
+
+	\begin{block}{$\mathbb{Q}_{t'}(\omega) \in [0,1]$}
+		If $\mathbb{Q}_{t'}(w)<0$, we would actually receive money by buying $A_\omega$, and we can sell it at $t$ for at least $\$0$. This would guarantee positive P\&L.
+
+		If $\mathbb{Q}_{t'}(w)>1$, we could short $A_\omega$, and buy it back at $t$ for at most $\$1$. This would guarantee positive P\&L.
+	\end{block}
+
+	If $\omega_1$ and $\omega_2$ are disjoint sets, we say they are \textbf{mutually exclusive events}.
+	\begin{block}{$\mathbb{Q}_{t'}(\omega_1) + \mathbb{Q}_{t'}(\omega_2) = \mathbb{Q}_{t'}(\omega_1 \cup \omega_2)$}
+		If the LHS exceeds the RHS, we buy $A_{\omega_1},A_{\omega_2}$ and short $A_{\omega_1\cup\omega_2}$; otherwise, we do the reverse.
+	\end{block}
+
+	An arbitrage strategy on Arrow-Debreu securities is sometimes called a \textbf{Dutch Book}, and properties derived from arbitrage-freeness are known as \textbf{Dutch Book Theorems}.
+
+	%Exercise: extend this reasoning to deal with spreads
+	%Exercise: justify Bayes rule
+
+	The market for Arrow-Debreu securities is arbitrage-free if and only if $\mathbb{Q}_{t'}(\cdot)$ obeys the axioms of Kolmogorov (1950), i.e. is a \textbf{probability measure} on $\mathcal{F}_t$.%Kolmogorov (1950)
+\end{frame}
+
+\begin{frame}{Fundamental Theorem of Asset Pricing}
+	In general, we can consider securities that are redeemable at time $t$ for some amount given by a $\mathcal{F}_t$-measurable function (\textbf{random variable}) $S$.
+
+	A market is arbitrage-free at time $t'$ if and only if the market price of each security $S$ is given by
+	$$\mathbb{E}_{\mathbb{Q}_{t'}}[S] = \int_\Omega S d\mathbb{Q}_{t'},$$
+	where $\mathbb{Q}_{t'}$ is some probability measure on $\mathcal{F}_t$. This is known as the \textbf{fundamental theorem of asset pricing} (FTAP).
+\end{frame}
+
+\begin{frame}{$\mathbb{Q}$-world vs $\mathbb{P}$-world}
+	A set of securities $M$ is said to form a \textbf{complete market} for $\Omega$ if and only if we can infer the arbitrage-free prices of every Arrow-Debreu security from the prices of $M$.
+
+	In practice, even if we erroneously assume identical bid and ask prices, markets are only ever complete for extremely trivial $\Omega$. This means there are many different measures $\mathbb{Q}$ that are consistent with the prices of $M$.
+
+	The only way to see if asset prices are consistent with one another is by constraining them with some set of \textbf{model assumptions} to induce a particular probability measure $\mathbb{P}$.
+
+	This is one extremely general description of the family of strategies known as \textbf{statistical arbitrage}. Favourable outcomes are no longer guaranteed.
+	%"All models are wrong" George Box
+	%Knightian uncertainty vs quantifiable
+\end{frame}
+
+\section{Portfolio Management}
+\begin{frame}{Utility}
+	We now consider events relating to our P\&L.
+
+	Suppose for simplicity that there are a finite number of possible P\&L outcomes $\Pi^1,\Pi^2,\ldots\Pi^n$ between now and some later time $t$.
+
+	We can construct a $\mathcal{F}_t$-measurable function $X$ that equals $\Pi^i$ on a set of probability $\mathbb{P}(X=\Pi^i)$.%X might represent the P\&L of a particular trading strategy
+
+	We might decide that for some pair of outcome distributions $X,X'$ we prefer our P\&L to follow $X$ rather than $X'$.
+
+	A theorem of Von Neumann and Morgenstern (1947) shows that under quite reasonable assumptions about our preferences, there exists a function $u:\{\Pi^1,\Pi^2,\ldots \Pi^n\}\to\mathbb{R}$ such that we prefer $X$ to $X'$ if and only if%Put assumptions in appendix
+	$$\mathbb{E}_\mathbb{P}[u(X)] > \mathbb{E}_\mathbb{P}[u(X')].$$
+
+	If different trading strategies produce different outcome distributions of P\&L, we might therefore seek a \textbf{utility function} to compare them.
+\end{frame}
+
+\begin{frame}{Compounding}
+	Recall that
+	$$\ell_{t_+}^+ = \ell_{t_-}^- + \ell_T.$$
+
+	If we have a series of intervals $T_1,T_2,\ldots$, we can define $T^n=\bigcup_{i=1}^n T_i$. Then we have $\ell_{T^n} = \sum_{i=1}^n \ell_{T_i}$.
+
+	Suppose we have two strategies, one with log-returns measure $\ell$ and another with log-returns measure $\ell'$.
+
+	If we assume for simplicity that $\ell_{T_i} - \ell'_{T_i}$ are independent and identically distributed, it follows from the law of large numbers that
+	$$\frac{\ell_{T^n}-\ell'_{T^n}}{n} \to \mathbb{E}[\ell_{T_i}] - \mathbb{E}[\ell'_{T_n}].$$
+
+	This means that in the long-run, $\ell$ will exceed $\ell'$ with probability approaching one if and only if
+	$$\mathbb{E}[\ell_{T_i}]>\mathbb{E}[\ell_{T_i}].$$
+
+	We call the stochastic process $\ell_t$ the \textbf{Kelly utility}, due to Kelly (1956).
+\end{frame}
+
+\begin{frame}{Kelly Criterion}
+	The Kelly utility of our P\&L over some interval $T$ is given by
+	$$u_T = \ell_T = \log(1 + R_T)$$
+	In practice, it may make sense to use the more conservative \textbf{fractional Kelly criterion},
+	$$u_T = \log(1 +\frac{R_T}{L}),$$
+	where $L\in [0,1]$ is a leverage parameter.%Some reasons: serial autocorrelation of returns, estimation uncertainty, greater risk aversion, returns decay as portfolio grows because of capacity
+
+	For small values of $\frac{R_T}{L}$, we can approximate this using a Taylor expansion:
+	$$\mathbb{E}[\log (1 + \frac{R_T}{L})] \approx \frac{1}{L}\mathbb{E}[R_T] - \frac{1}{2L^2}\mathbb{E}[R_T^2] + \mathbb{E}[O(\frac{R_T^3}{L^3})].$$
+	The quadratic approximation is known as the \textbf{quadratic utility} of the return on capital.
+\end{frame}
+
+\begin{frame}{Quadratic Utility}
+	If the central limit theorem applies to the $u_{T_i}$, then in the limit the distribution of $u_{T^n}$ will be governed only by the first two moments.
+
+	Recall that over certain intervals $T'$, $R_{T'}$ is given by $w \cdot r_{T'}$, where $w$ is the vector of portfolio weights. If $w$ is deterministic, the quadratic utility over $T'$ is given by
+	$$\frac{1}{L} w \cdot \mathbb{E}[r_{T'}] - \frac{1}{2L^2} w^\top \mathbb{E}[r_{T'} r_{T'}^\top] w,$$
+	and the optimal value of $w$ is given by
+	$$w^* = L \mathbb{E}[r_{T'} r_{T'}^\top]^{-1} \mathbb{E}[r_{T'}] = L (\Sigma+\mu \mu^\top)^{-1}\mu,$$
+
+	where $\mu$ and $\Sigma$ are the expectation and covariance of $r_{T'}$.
+\end{frame}
+
+\begin{frame}{Markowitz Portfolio Optimisation}
+	In practice, $\mu$ is relatively small compared to $\Sigma$, and so we have
+
+	$$w* = L(\Sigma+\mu\mu^\top)^{-1}\approx L\Sigma^{-1}\mu.$$
+
+	We can get this by maximising the quadratic loss function
+	$$Lw\cdot \mu - \frac{1}{2}w^\top \Sigma w.$$
+
+	This is equivalent to maximising the ratio
+	$$\frac{\mathbb{E}[R_{T'}]}{\sqrt{\mathrm{Var}[R_{T'}]}},$$
+	known as the \textbf{Sharpe ratio}, subject to $\mathrm{Var}[R_{T'}]$ having some desired positive value. %Security market line
+
+	The problem of maximising expected returns subject to an upper bound on returns variance is known as \textbf{Markowitz portfolio optimisation}.%Kelly has a lot of assumptions, this might be a bit more interpretable.
+	% "Cars have brakes so you can drive faster." Ben Rady
+	%Usually we like convex problems and especially quadratic programs
+
+	%Diagram: efficient frontier and security market line
+\end{frame}
+
+\begin{frame}{Estimation}
+	If we have a number of returns vectors $r_1,r_2,\ldots r_n$, we might try to invoke the law of large numbers and write
+	\begin{align*}
+		\mu	&\approx \hat{\mu}	&= \frac{1}{n} \sum_{i=1}^n r_n,
+	\\	\Sigma	&\approx \hat{\Sigma}	&= \frac{1}{n-1} \sum_{i=1}^n r_n r_n^\top.
+	\end{align*}
+
+	Unfortunately, $n$ might be smaller than the number of assets $p$. In this case, the matrix $[r_1,r_2,\ldots r_n]^\top$ will have a nullspace containing portfolios whose estimated volatility is $0$. Portfolios close to this nullspace will have arbitrarily large Sharpe ratios, and no optimal portfolio will exist, since we cannot solve $\Sigma w = L\mu$.
+
+	Furthermore, even if $n>p$, errors in the estimation may have a significant effect on the expected utility out-of-sample.
+
+	We can augment the loss function slightly by adding a \textbf{regularisation penalty},
+	$$Lw\cdot\mu-\frac{1}{2}w^\top\Sigma w-\frac{\lambda}{2}\|w\|_2^2,$$
+	which is guaranteed to admit an optimum $w*(\lambda) = L(\Sigma+\lambda I)^{-1}\mu$.
+
+	If we compute the SVD $\Sigma=UDU^\top$, we will have
+	$$\lim_{\lambda\to 0^+}w*(\lambda) = UD^+U^\top\mu,$$
+	where $D^+$ replaces the nonzero elements of $D$ with their inverse.%Double check that this works as described
+
+	Even though these produce a solution, the out-of-sample utility may still be unsatisfactory due to estimation error.
+
+	Portfolios orthogonal to $\mu$ will have estimated volatility of $0$, which will not be reflected in practice. Portfoli
+
+	We need to make use of known qualitative facts about the distribution of asset returns to better estimate the covariance matrix.
+\end{frame}
+
+\section{Factor Models}
+\begin{frame}{Capital Asset Pricing Model}
+	There are certain common factors that jointly influence all stocks.
+
+	In the Capital Asset Pricing Model (CAPM), due initially to Treynor (1961), the returns\footnote{Traditionally, these are excess returns relative to some benchmark interest rate.} on the $j$th asset over $T_i$ are given by
+	$$r_{T_i}^j = \underbrace{\beta^j}_{\textrm{Asset Sensitivity}} \underbrace{f_{T_i}-\mathbb{E}[f_{T_i}]}_{\textrm{Market Return}} + \underbrace{\alpha^j + \sigma^j\epsilon_{T_i}^j}_{\textrm{Idiosyncratic Return}},$$ 
+	where $\epsilon_{T_i}^j$ have mean zero and unit variance, and are uncorrelated with the $f_{T_i}$ and with each other.
+
+	We have
+	\begin{align*}
+		\Sigma	&= \beta \Sigma_f \beta^\top + \Sigma_\epsilon,
+	\\	\mu	&= \alpha,
+	\end{align*}
+	where $\alpha,\beta$ are populated by $\alpha^j,\beta^j$, $\Sigma_\epsilon$ is a diagonal matrix with entries $\sigma^j^2$, and $\Sigma^f$ is the variance of $f_{T_i}$.
+
+	Let $H_\beta=\beta (\beta^\top \beta)^{-1}\beta^\top$ be the projection matrix onto the span of $\beta$. Then
+	$$\alpha = \underbrace{H_\beta\alpha}_{\textrm{Spanned}} + \underbrace{(I-H_\beta) \alpha}_{\textrm{Orthogonal}} = \beta \alpha^\beta + \alpha^\bot,$$
+	where $\alpha^\bot$ is orthogonal to $\beta$.
+
+	If we set $w = \alpha^\bot$, we will have $w\cdot\mu = \|\alpha^\bot\|_2^2$ and $w^\top\Sigma w = \|\Sigma_\epsilon \alpha^\bot\|_2^2$.
+
+	The Sharpe ratio of this portfolio is
+	$$\frac{\|\alpha^\bot\|_2^2}{\|\Sigma_\epsilon\alpha^\bot\|_2}.$$
+
+	As $p\to\infty$, this grows as
+	$$\frac{p^2 \overline{(\alpha^\bot^j)^2}}{p \sqrt{\overline{(\sigma^j \alpha^\bot^j)^2}}} = p \frac{\overline{(\alpha^\bot^j)^2}}{\sqrt{\overline{(\sigma^j \alpha^\bot^j)^2}}} $$
+
+	Since an infinite Sharpe ratio would allow riskless profits (arbitrage), it must be the case that $\frac{\overline{(\alpha^\top^j)^2}}{\sqrt{\overline{(\sigma^j\alpha^\top^j)^2}}}$ decays to zero faster than $p^{-1}$ as we add more assets.
+
+	Assuming $\sigma^j<\sigma^{\max}$ for all $j$, this means that $\overline{(\alpha^\top^j)^2}\to 0$ faster than $p^{-2}$.
+
+	Then $r_{T_i} = \beta ((f_{T_i}-\mathbb{E}[f_{T_i}]) + \alpha^\beta) + \sigma^j\epsilon_{T_i}^j$. We call $\alpha^\beta$ the \textbf{risk premium} of the factor.
+
+	%Why is risk premium equal to expected factor return
+\end{frame}
+
+\begin{frame}{Factor Models}
+	In general, we replace $\beta$ with a matrix $B$ and $f_{T_i}$ becomes a vector.
+
+	Then we have
+	$$r_{T_i} = B(f_{T_i}-\mathbb{E}[f_{T_i}] + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_{T_i}.$$
+
+	Centering the factor returns $f_{T_i}$ will not affect the model, so we can assume $\mathbb{E}[f_{T_i}]=0$.
+	$$r_{T_i} = B(f_{T_i} + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\epsilon_{T_i}.$$
+
+	Then we have
+	\begin{align*}
+		\Sigma	&= B \Sigma_f B^\top + \Sigma_\epsilon,
+	\\	\mu	&= \alpha.
+	\end{align*}
+	We say that the covariance matrix of $r_{T_i}$ is \textbf{spiked}, meaning that it is the sum of a low-rank matrix and a diagonal matrix.
+
+	If we construct matrices $R,F,\alpha^\beta,\alpha^\bot,\varepsilon$ whose $i$th columns are $r_{T_i},f_{T_i},\alpha^\beta,\alpha^\bot,\epsilon_{T_i}$ respectively, then we have
+	$$R = B(F + \alpha^B) + \alpha^\bot + \Sigma_\epsilon^\frac{1}{2}\varepsilon = BF + \mathbb{E}[R] + \Sigma_\epsilon^\frac{1}{2}\varepsilon = BCC^{-1}F + \mathbb{E}[R] + \Sigma_\epsilon^\frac{1}{2}\varepsilon,$$
+	for any invertible square matrix $C$. The invariance to $C$ is sometimes called \textbf{rotational indeterminacy}.
+
+	Assuming the $\varepsilon$ are jointly normal and $B$ has linearly independent columns, the following parameter estimates are maximal likelihood:
+	\begin{align*}
+		\mathbb{E}[r_{T_i}]	&\approx \overline{R}		&= \frac{1}{n}\sum_{i=1}^n r_{T_i},
+	\\	F			&\approx \hat{F}		&= (B^\top \Sigma_\epsilon^{-1} B)^{-1}B^\top \Sigma_\epsilon^{-1}(R-\overline{R}),
+	\\	\varepsilon		&\appprox \hat{\varepsilon}	&= \Sigma_\epsilon^{-1} (R-\overline{R}-BF),
+	\\	\Sigma_\epsilon		&\approx \hat{\Sigma_\epsilon}	&= \frac{1}{n}(R-\overline{R}-BF)(R-\overline{R}-BF)^\top \textrm{ (with off-diagonal elements zeroed out)}.
+	\\	B			&\approx \hat{B}_\textrm{FM}	&= (R-\overline{R})F^\top (FF^\top)^{-1},\textrm{ if }F\textrm{ is known, or}%Fama macbeth estimate
+	\\	B			&\approx \hat{B}_\textrm{PPCA}	&= \Sigma_\epsilon^\frac{1}{2} U_m,%Needs double checking. How can the two estimates be reconciled?
+	\end{align*}
+	where $U_m$ consists of the first $m$ principal components of $\Sigma_\epsilon^{-\frac{1}{2}}(R-\overline{R})$.%Tipping and Bishop
+
+	In practice, our estimate may change over time. If we have $\hat{B}_\textrm{PPCA}^t,\hat{B}_\textrm{PPCA}^{t+1}$, we may wish to rotate the latter to be close to the former.
+
+	To achieve this, we can use the estimate $\hat{B}_\textrm{PPCA}^{t+1}VU^\top$, where $UDV^\top$ is the SVD of $B_\textrm{PPCA}^t^\top B_\textrm{PPCA}^{t+1}$.%Problem described in Paleologo equation 7.43
+
+	If $B$ and $\Sigma_\epsilon^{-1}$ are known, an unbiased estimator for the factor covariance $\Sigma_f$ is given by $\frac{1}{n}F F^\top - (B\top \Sigma_\epsilon^{-1} B)^{-1}$.%In practice not too much uncertainty about idio vols
+\end{frame}
+
+\begin{frame}{Fundamental Factor Models}
+	We don't necessarily need to estimate $B$. We can use \textbf{characteristics} of the various assets. Some common choices:
+	\begin{align*}
+		\item $1$ if the asset belongs to a particular country or industry, $0$ otherwise
+		\item All $1$s (equal weighting)
+	\end{align*}
+
+	It is also possible to extend the model to include characteristics that vary day-to-day, such as
+	\begin{align*}
+		\item Realised volatility
+		\item Illiquidity (e.g. $\overline{\left(\frac{\vert \textrm{Daily Returns}\vert}{\textrm{Daily Volume}}\right)}$, due to Amihud (2002))
+		\item Crowding
+		\item Market capitalisation
+		\item Recent returns (momentum)%Capture new trends
+		\item Numbers derived from financial reports, e.g. net asset value
+	\end{align*}
+
+	It is usually best to ensure the characteristics are linearly independent.
+\end{frame}
+
+\section{Dynamic Portfolio Selection}
+\begin{frame}{Market Efficiency}
+	If all we do is maintain a fixed portfolio, there is very little ongoing need for trading.\footnote{More precisely, $w_t$ is fixed, but $a_t=\Pi_t \frac{w_t}{p_t}$ may need to change a little as $p_t$ changes.}
+
+	If all investors do likewise, 
+
+	
+
+However, this would also mean prices would not reflect fair values
+\end{frame}
+	%Efficient Markets
+		%Market return should match index return?
+	%Index investing. (Stats?)
+		%Grossman-Stiglitz Paradox
+
+\begin{frame}{Edge}
+	%In order to inform trading activity, market participants receive certain data about the orders and trades on the exchange.
 	% Theoretical value
 		% Efficiency
 			%Edge
@@ -641,123 +907,14 @@
 	% "lit" exchange just means more market data is made public
 \end{frame}
 
-\section{Portfolio Management}
-\begin{frame}{Uncertainty}
-	An \textbf{event} is a set of possible worlds distinguished from other possible worlds by some common feature.
-
-	For instance, there is a set of possible worlds where Australia wins its next game of cricket against the UK.
-
-	Suppose $\Omega$ is the set of all events.\footnote{We require that $\Omega$ be a $\sigma$-algebra.} At each time $t'$, we can construct a set $\mathcal{F}_{t'}\subseteq \Omega$ containing all events whose outcome is known at time $t'$.\footnote{$\mathcal{F}_t$ is a filtration, i.e. a nondecreasing $\sigma$-algebra}
-
-	An \textbf{Arrow-Debreu security} $A_\omega$ for $\omega\in \mathcal{F}_t$ is one which we can exchange at time $t$ for $\$1$ if $\omega$ occurs and $\$0$ otherwise. Assume there exists $t$ such that $\omega\in\mathcal{F}_t$.
-
-	Let $\$\mathbb{Q}_{t'}(\omega)$ be the market price of $\omega$ at time $t'\leq t$. Assume unlimited liquidity, no fees, and no collateral requirements or interest payments.
-
-	The market is \textbf{arbitrage-free} if there is no fixed set of trades that guarantees positive P\&L.
-
-	Assuming this is the case, we can deduce properties that $\mathbb{Q}_{t'}(\cdot)$ must satisfy.
-
-	\begin{block}{$\mathbb{Q}_{t'}(\omega) \in [0,1]$}
-		If $\mathbb{Q}_{t'}(w)<0$, we would actually receive money by buying $A_\omega$, and we can sell it at $t$ for at least $\$0$. This would guarantee positive P\&L.
-
-		If $\mathbb{Q}_{t'}(w)>1$, we could short $A_\omega$, and buy it back at $t$ for at most $\$1$. This would guarantee positive P\&L.
-	\end{block}
-
-	If $\omega_1$ and $\omega_2$ are disjoint sets, we say they are \textbf{mutually exclusive events}.
-	\begin{block}{$\mathbb{Q}_{t'}(\omega_1) + \mathbb{Q}_{t'}(\omega_2) = \mathbb{Q}_{t'}(\omega_1 \cup \omega_2)$}
-		If the LHS exceeds the RHS, we buy $A_{\omega_1},A_{\omega_2}$ and short $A_{\omega_1\cup\omega_2}$; otherwise, we do the reverse.
-	\end{block}
-
-	In an arbitrage-free market, $\mathbb{Q}_{t'}(\cdot)$ obeys the Kolmogorov axioms, and is therefore a \textbf{probability measure} on $\mathcal{F}_t$.%Kolmogorov (1950)
-
-	If $\mathbb{Q}_{t'}(\omega_1)+\mathbb{Q}(\omega_2)$ exceeds $\mathbb{Q}_{t'}$
-
-	%Dutch books & FTAP & Q vs P quant.
-		%Polymarket example
-		%Dutch books bayes rule?
-	%Complete markets, arrow securities. Effects of incompleteness?
-	%(No-)Arbitrage (buy low sell high. Setup for statarb later)
-	%Problems with the notion of probability: 1. estimation (P) 2. market incompleteness (Q) 3. risk premia (Q->P). "All models are wrong" George Box
-	%Knightian uncertainty vs quantifiable
-	%Estimation problems
-		%Empirical risk minimisation
-	%VNM
-\end{frame}
-
-\begin{frame}{Decision-Making}
-	%Systematic, semi-systematic, discretionary
-	%High-touch, low-touch
-	% What is point of systematic? (consistency, breadth)
-		% “We’re mediocre traders, but our system never has rows with its girlfriends — that’s the kind of thing that causes patterns in markets.” Nick Patterson RenTech
-\end{frame}
-
-\begin{frame}{Compounding}
-	%kelly theory
-		%Fractional kelly due to uncertainty in estimation. paleologo 13.3
-		%ignores capacity constraints / transaction costs
-	%Large balance sheet -> higher risk tolerance
-\end{frame}
-
-\begin{frame}{Risk}
-	% Trading is zero-sum. So why do we do it
-	% Risk = variance
-		% "Cars have brakes so you can drive faster." Ben Rady
-		% Quadratic utility justification. 
-	% Portfolio variance and covariance
-		%Hedging
-			%Adverse selection justification for hedging
-\end{frame}
-
-\begin{frame}{Portfolio Selection}
-	%Usually we like convex problems and especially quadratic programs
-	%Markowitz frontier
-	%Pareto optimality
-	%Security market line
-	%Markowitz solution
-		%Estimation difficulties
-\end{frame}
-
-\begin{frame}{Capital Asset Pricing Model}
-	% Arbitrage arguments
-	% Generalisation to spiked covariance matrix, finite universe. paleologo 7.2.1
-	%Efficient Markets
-	%Index investing. (Stats?)
-		%Why ASX200 and not all ords (microstructure)
-		%Grossman-Stiglitz Paradox
-\end{frame}
-
-\begin{frame}{Factor Models}
-	% Mathematics
-		%Cross sectional regression
-			%Weighting
-		%Factor cov shrinkage (paleologo 6.3.1)
-	% Sectors
-	% Fama French
-	% Factor models approximate cov matrix
-		% Why cov matrix approximation is hard to begin with - paleologo 4.5.2 faq 4.5
-	% Overrepresentation -> equal weighting (equal weighting index)
-	% Factor loadings can't be centred (paleologo 4.4.1) unless an "equal weighting" vector is included
-	% Types (paleologo 4.6):
-		% characteristic (see paleologo 6.7)
-			%Market (1s vector)
-			%Countries and industries
-			%Momentum
-			%Fundamentals
-			%Volatility
-			%Liquidity
-			%Crowding
-			%Size
-		% statistical
-			%Market (beta). Show that this is first principal component
-			%Latent factors
-				%PPCA = Tipping and Bishop 1998, explicit solution section 3.2. Formulation assumes returns zscored by idio vol, this is not a problem
-					%limits to zero paleologo section 7.1.2
-		% macroeconomic
-			% Fama macbeth
-\end{frame}
-
 \begin{frame}{$\alpha$}
-	%Spanned vs orthogonal
+	In general, the best estimates for $\Sigma_t$ and $\mu_t$ will probably vary with time.
+
+	Suppose that we 
+
+	%Sharpe as t test
+	%Multiple testing
+
 	%Feature engineering
 		%Decays
 		%Winsorise or squash
@@ -780,7 +937,17 @@
 			%Peter cotton's point
 \end{frame}
 
+\begin{frame}{Risk Management}
+
+\end{frame}
+
+\begin{frame}{Transaction Cost Analysis}
+	\$\Pi_T	&= \underbrace{\$\int_{t\in T} a_t^- dm}_{\textrm{Midprice P\&L}} - \underbrace{\$\int_{t\in T} \nu_t da}_{\textrm{PPI Penalty}} - \underbrace{\$\int_{t\in T} \lambda_t da}_{\textrm{IPI Penalty}}
+		%Why ASX200 and not all ords (microstructure)
+\end{frame}
+
 \begin{frame}{Statistical Arbitrage}
+	%Pairs trading & vol weighting heuristic for legs
 	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
 \end{frame}
 
@@ -817,17 +984,14 @@
 \end{frame}
 
 \begin{frame}{Alternative Price Proxies}
+	%bouchaud justification for weighted mid. Most general case is probably: correlated random walks with nonconstant but identical drift,variation
 	More generally, we can define the depth-$\$d$ imbalance,
 	$$I_t(\$d)=\frac{Q_t(+1,\$b_t-\$d)}{Q_t(+1,\$b_t-\$d)+Q_t(-1,\$a_t+\$d)}.$$%Takes into account information from more levels of the book
 
 	\pause
 
 	We can also define an \textbf{exponentially weighted imbalance},
-	$$I_t(\alpha) = $$%Takes into account the entire book
-
-	Some microprices with more theoretical backing are discussed in the appendix.
-
-	%bouchaud justification for weighted mid. Most general case is probably: correlated random walks with nonconstant but identical drift,variation
+	$$I_t(\zeta) = \frac{\sum_{(+1,q,p)\in\mathcal{B}_t}q\exp(-\zeta\vert b_t-p\vert)}{\sum_{(+1,q,p)\in\mathcal{L}_t}q\exp(-\zeta\min(\vert b_t-p\vert,\vert a_t-p\vert))}$$%Takes into account the entire book
 \end{frame}
 
 
@@ -865,5 +1029,22 @@
 		%Backtest vs production differences
 	%What is a "trading strategy"? What does one "look like"?
 		%It's easier to model how markets go right than how they go wrong. All happy families are alike
+	%Hedging
+		%Adverse selection justification for hedging
+
+	%Computational aspects
+		%Low latency
+			%hardware, FPGAs
+		%Performance research
+			%Quantifying latency eg clock drift
+\end{frame}
+%\begin{frame}{Decision-Making}
+	%Systematic, semi-systematic, discretionary
+	%High-touch, low-touch
+	% What is point of systematic? (consistency, breadth)
+		% “We’re mediocre traders, but our system never has rows with its girlfriends — that’s the kind of thing that causes patterns in markets.” Nick Patterson RenTech
+%\end{frame}
+
+\begin{frame}{Bibliography}
 \end{frame}
 \end{document}
