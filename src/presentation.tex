@@ -613,9 +613,7 @@
 
 	Gatheral (2016) derives this from a variety of different models of market impact.
 
-	Recall that our P\&L from persistent price impact is given by 
-	$$-\$\int_{t\in T} \nu_t da.$$
-	Most reasonable market impact models are said not to admit price manipulation, in the sense that if $a_{t_-}=a_{t_+}=0$, this number cannot be positive.
+	Most reasonable market impact models are said not to admit price manipulation, in the sense that if $a_{t_-}=a_{t_+}=0$, our P\&L from price impact cannot be positive.
 	%Paleologo 11.1.1
 \end{frame}
 
@@ -835,7 +833,7 @@
 
 	Assuming the $\varepsilon$ are jointly normal and $B$ has linearly independent columns, the following parameter estimates are maximal likelihood:
 	\begin{align*}
-		\mathbb{E}[r_i]	&\approx \overline{R}		&= \frac{1}{n}\sum_{i=1}^n r_i,
+		\mathbb{E}[r_i]		&\approx \overline{R}		&= \frac{1}{n}\sum_{i=1}^n r_i,
 	\\	F			&\approx \hat{F}		&= (B^\top \Sigma_\epsilon^{-1} B)^{-1}B^\top \Sigma_\epsilon^{-1}(R-\overline{R}),
 	\\	\varepsilon		&\appprox \hat{\varepsilon}	&= \Sigma_\epsilon^{-1} (R-\overline{R}-BF),
 	\\	\Sigma_\epsilon		&\approx \hat{\Sigma_\epsilon}	&= \frac{1}{n}(R-\overline{R}-BF)(R-\overline{R}-BF)^\top \textrm{ (with off-diagonal elements zeroed out)}.
@@ -848,7 +846,7 @@
 
 	To achieve this, we can use the estimate $\hat{B}_\textrm{PPCA}^{t+1}VU^\top$, where $UDV^\top$ is the SVD of $B_\textrm{PPCA}^t^\top B_\textrm{PPCA}^{t+1}$.%Problem described in Paleologo equation 7.43
 
-	If $B$ and $\Sigma_\epsilon^{-1}$ are known, an unbiased estimator for the factor covariance $\Sigma_f$ is given by $\frac{1}{n}F F^\top - (B\top \Sigma_\epsilon^{-1} B)^{-1}$.%In practice not too much uncertainty about idio vols
+	If $B$ and $\Sigma_\epsilon^{-1}$ are known but $F$ are estimated, an unbiased estimator for the factor covariance $\Sigma_f$ is given by $\frac{1}{n}F F^\top - (B\top \Sigma_\epsilon^{-1} B)^{-1}$.%In practice not too much uncertainty about idio vols
 		%Why ASX200 and not all ords (microstructure)
 \end{frame}
 
@@ -915,47 +913,22 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Statistical Arbitrage}
-	Consider the modified factor model
-	$$r_i = Bf_i + \Theta_0\epsilon_i + \Theta_1\epsilon_{i-1} = \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]\left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right],$$
-	where $B$ is known, $f_i$ are i.i.d. with mean zero and covariance $\Sigma_f$, $\Theta_0,\Theta_1$ are known diagonal matrices, and $\epsilon_i$ are i.i.d. white noise.
+\begin{frame}{Linear Regression}
+	Suppose that	
+	$$R = B F + \alpha + \Sigma_\epsilon^\frac{1}{2}\epsilon,$$
+	and that $f_i$ are known in advance of $r_i$.
 
-	This is an $MA(1)$ process.
+	If we view this as a factor model, we can recall the Fama-MacBeth estimate for $B$,
+	$$B \approx \hat{B}_\textrm{FM}	&= (R-\overline{R})F^\top (FF^\top)^{-1}.$$
 
-	We can apply a Kalman filter to forecast $r_i$. The state is
-	$$x_i = \left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right].$$
+	Then we can forecast returns according to
+	$$\mathbb{E}[r_i] = B f_i + \alpha \approx (R-\overline{R})F^\top (FF^\top)^{-1} + \overline{R}.$$
+	The covariance of $r_i$ conditional on $f_i$ is $\Sigma_\epsilon$.
 
-	Maintain a state estimate $\hat{x}_i$ and uncertainty matrix $P_i$. Initialise $\hat{x}_i$ to zero and $P_i$ to 
-	$$\left[\begin{matrix}0 & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right].$$
+	It follows that the optimal portfolio conditional on $f_i$ has the form
+	$$w = L \Sigma_\epsilon^{-1} (B f_i + \alpha) \approx L \Sigma_\epsilon^{-1} ((R-\overline{R})F^\top (FF^\top)^{-1}f_i+\overline{R}).$$%Positions weighted according to inverse variance of noise term
 
-	The transition matrix is
-	$$F = \left[\begin{matrix}0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & I & 0\end{matrix}\right],$$
-	and the innovation covariance is
-	$$Q = \left[\begin{matrix}\Sigma_f & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right],$$
-	and so $x_i = Fx_{i-1} + Q\varepsilon_i$, where $\varepsilon$ is multivariate normal.
-
-	Defining
-	\begin{align*}
-		H		&= \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]
-	\\	\hat{x}_i'	&= F\hat{x}_{i-1},	%&= [0\\0\\ \hat{\epsilon}_{i-1}]
-	\\	P_i'		&= FP_{i-1}F^\top+Q,	%&= [\Sigma_f,0,0\\0,I,0\\0,0,P^\epsilon_{i-1}]
-	\\	y		&= r_i - H \hat{x}_i',	%&= r_i - \Theta_1 \hat{\epsilon}_{i-1}
-	\\	S		&= H P_i' H^\top,	%&= B\Sigma_f B^\top + \Theta_0\Theta_0^\top + \Theta_1 P^\epsilon_{i-1}\Theta_1^\top
-	\\	K		&= P_i' H^\top S^{-1},  %= [\Sigma_f B^\top \\ \Theta_0 \\ P^\epsilon_{i-1} \Theta_1](B\Sigma_f B^\top + \Theta_0\Theta_0^\top + \Theta_1 P^\epsilon_{i-1}\Theta_1^\top)^{-1}
-	\end{align*}
-	we then have
-	\begin{align*}
-		\hat{x}_i	&= \hat{x}_i' + K y,
-	\\	P_i		&= (I-KH)P_i'(I-KH)^\top.
-	\end{align*}
-	Finally, our forecast for $r_{i+1}$ is $HF\hat{x}_i$, and our forecast for the covariance of $r_{i+1}$ is $HF P_i F^\top H^\top + HQH^\top$.
-
-	Therefore we hold a portfolio $w = L(HFP_i F^\topH^\top + HQH^\top)^{-1} HF\hat{x}_i$.
-	%L(B\Sigma_f B^\top + \Theta_0^2 + \Theta_1 P^\epsilon_i \Theta_1)^{-1} \Theta_1 P^\epsilon_i
-	%Alpha vector \Theta_1 P^\epsilon_i. Is this orthogonal to B
-
-	%Pairs trading & vol weighting heuristic for legs
-	% Factor model stat arb (eg pairs trading), kalman filter with factor cov structure
+	In the most general case, $\Sigma_\epsilon$ need not be diagonal.
 \end{frame}
 
 \begin{frame}{Feature Engineering}
@@ -1004,7 +977,6 @@
 
 	The portfolio return for the $i$th time period will be $R_i^A = r_i^A x_i \cdot \beta$.
 
-	%Move this to the generic portfolio optim section
 	We can compute the Sharpe ratio $\lambda = \frac{\overline{R_i^A}}{\sqrt{\overline{(R_i^A - \overline{R_i^A})^2}}}$.
 
 	If we assume that $r_1^A x_1,r_2^A x_2,\ldots$ are approximately i.i.d. normal, we will have
@@ -1048,6 +1020,25 @@
 	Note that as $\pi\to\infty$ we have $\beta\to 0$.
 \end{frame}
 
+\begin{frame}{Statistical Arbitrage}
+	Consider the modified factor model
+	$$r_i = Bf_i + \Theta_0\epsilon_i + \Theta_1\epsilon_{i-1} = \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]\left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right],$$
+	where $B$ is known, $f_i$ are i.i.d. multivariate normal with mean zero and covariance $\Sigma_f$, $\Theta_0,\Theta_1$ are known diagonal matrices, and $\epsilon_i$ are i.i.d. standard multivariate normal.
+
+	We can apply a Kalman filter to forecast $r_i$ (see appendix). Over the interval $(t_i,t_{i+1}]$, we will hold a portfolio
+	$$w = L(\Theta_1 P^\epsilon_i \Theta_1 + B\Sigma_f B^\top + \Theta_0^2)^{-1} \Theta_1\hat{\epsilon}_i,$$
+	where $\hat{\epsilon}_i$ is the filtered value of $\epsilon_i$ and $P^\epsilon_i$ is the uncertainty matrix of the filtering.
+
+	As the number of assets $p\to\infty$, we will be able to infer $f_i$ exactly.
+
+	The residual returns $r_i-Bf_i = \Theta_0\epsilon_i + \Theta_1 \epsilon_{i-1}$ follow an independent $MA(1)$ process for each asset. We can filter $\epsilon_i$\footnote{Assuming invertibility} as
+	$$\epsilon_i \approx \Theta_0^-1 \sum_{j=0}^n \left(-\Theta_1\Theta_0^j\right)^{-1}(r_{i-j}-Bf_{i-j}),$$
+	and finally
+	$$\mathbb{E}[r_{i+1}] \approx \Theta_1\Theta_0^-1 \sum_{j=0}^n \left(-\Theta_1\Theta_0^{-1}\right)^j(r_{i-j}-Bf_{i-j}).$$
+
+	This is almost entirely orthogonal to $B$.
+\end{frame}
+
 %\section{Options Trading}
 	%If black scholes was true options markets wouldnt exist
 
@@ -1089,6 +1080,40 @@
 
 	We can also define an \textbf{exponentially weighted imbalance},
 	$$I_t(\zeta) = \frac{\sum_{(+1,q,p)\in\mathcal{B}_t}q\exp(-\zeta\vert b_t-p\vert)}{\sum_{(+1,q,p)\in\mathcal{L}_t}q\exp(-\zeta\min(\vert b_t-p\vert,\vert a_t-p\vert))}$$%Takes into account the entire book
+\end{frame}
+
+\begin{frame}{Kalman Filter}
+	The state is
+	$$x_i = \left[\begin{matrix}f_i \\ \epsilon_i \\ \epsilon_{i-1}\end{matrix}\right].$$
+
+	Maintain state estimates $\hat{x}_i = \left[\begin{matrix}\hat{f}_i \\ \hat{\epsilon}_i \\ \hat{\epsilon}_{i-1}\end{matrix}\right]$ and uncertainty matrix
+	$$P_i = \left[\begin{matrix}P^f_i&\ldots&\ldots\\\ldots&P^\epsilon_i&\ldots\\\ldots&\ldots&P^\epsilon_{i-1}\end{matrix}\right].$$
+	Initialise $\hat{x}_i$ to zero and $P_i$ to 
+	$$\left[\begin{matrix}0 & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right].$$
+
+	We have $r_i = Hx_i$, where
+	$$H = \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]$$
+
+	The transition matrix is
+	$$F = \left[\begin{matrix}0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & I & 0\end{matrix}\right],$$
+	and the innovation covariance is
+	$$Q = \left[\begin{matrix}\Sigma_f & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right],$$
+	and so $x_i = Fx_{i-1} + Q\varepsilon_i$, where $\varepsilon$ is multivariate normal.
+
+	Defining
+	\begin{align*}
+	\\	y				&= r_i - \Theta_1 \hat{\epsilon}_{i-1}
+	\\	S				&= B\Sigma_f B^\top + \Theta_0^2 + \Theta_1 P^\epsilon_{i-1}\Theta_1
+	\\	K				&= \left[\begin{matrix}\Sigma_f B^\top \\ \Theta_0 \\ P^\epsilon_{i-1} \Theta_1 \end{matrix}\right] S^{-1} 
+	\end{align*}
+	we then have
+	\begin{align*}
+		\hat{\epsilon}_i&= \Theta_0 S^{-1} y
+	\\	P_i		&= (I-KH) (F P_{i-1} F^\top + Q) (I-KH)^\top = (I-KH) (F P_{i-1} F^\top + Q) (I-KH)^\top.
+	\end{align*}
+	Finally, our forecast for $r_{i+1}$ is $\Theta_1\hat{\epsilon}_i$, and our forecast for the covariance of $r_{i+1}$ is $\Theta_1 P^\epsilon_i \Theta_1 + B\Sigma_f B^\top+\Theta_0^2$.
+
+	Therefore we hold a portfolio $w = L(\Theta_1 P^\epsilon_i \Theta_1 + B\Sigma_f B^\top + \Theta_0^2)^{-1} \Theta_1\hat{\epsilon}_i$.
 \end{frame}
 
 
