@@ -91,15 +91,13 @@
 % Table of contents
 \begin{frame}{Outline}
 	\tableofcontents
-	%% Good to include concrete data examples throughout
-	%% Make sure := for definitions
 \end{frame}
 
 \sectionquote{``Governing by the power of virtue can be compared to the pole star, which remains fixed in place while all the other stars orbit respectfully around it.'' Confucius}
 \section{Securities Markets}
 
 \begin{frame}{Spot Transactions}
-	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.%Counterexample: currency triangles
+	The point of trading is to obtain an asset by giving up money, or obtain money by giving up an asset.
 
 	If I give you $q>0$ units of some asset $A$, and you give me $\$pq$, then:%I'm gonna use dollar signs here although often we trade in many currencies. It is typical to emphasise one currency which we call the numeraire and express things in terms of it.
 	\begin{itemize}
@@ -110,8 +108,6 @@
 	Buying and selling are collectively called `trading'.%One trade can have multiple counterparties, we will see this later
 
 	Suppose I own some amount of $A$ and some amount of money. If we let $s$ be $+1$ for buying and $-1$ for selling, then the result of any trade is to add $qs$ to the amount of $A$ I own, and add $-\$qps$ to the amount of money I have. %s is called the sign of the trade
-
-	% Stock image of retail store
 \end{frame}
 
 \begin{frame}{Securities Markets and Exchanges}
@@ -449,9 +445,9 @@
 	\pause
 
 	The match time is typically chosen at random in some short interval in order to disincentivise this behaviour.
+\end{frame}
 
-	\pause
-
+\begin{frame}{Time Priority}
 	To further encourage early submission of orders, many exchanges also implement a time priority rule.%As opposed to pro rata
 	\begin{block}{Time Priority}
 		If two orders exist at the same price $\$p$, the one that reached the matching engine later cannot be matched unless the earlier order is completely filled.
@@ -562,7 +558,6 @@
 	If $\mathcal{L}_t^1$ or $\mathcal{L}_t^2$ changes before our order reaches the matching engine, we may not get the fill, or the price may no longer be favourable.
 
 	Even if $\delta_1\cap\delta_2\not=\emptyset$, it may be possible to make one of the trades passively, and make the other immediately after the first is filled.%Also PFOF
-	%Exercise
 \end{frame}
 
 \begin{frame}{Price Proxies}
@@ -644,7 +639,7 @@
 	where $\gamma$ is a risk-aversion parameter\footnote{Defined differently in the paper} and $\varsigma$ is the difference between the two prices.
 	%It has been popular to use something like this for on-chain crypto market making, often subsidised by the creator of the crypto asset. Not necessarily with the intention of making money, but just because liquidity and trade volumes reinforce one another
 
-	In general, to avoid large $a_t$, (which would make our P\&L very sensitive to price changes), we want the amount we buy to match the amount we sell. %Bouchaud et. al. (when?) use point process models
+	In general, to avoid large $a_t$, (which would make our P\&L very sensitive to price changes), we want the amount we buy to match the amount we sell. 
 
 	It can also be useful to \textbf{hedge} with an opposing position in a correlated asset.
 \end{frame}
@@ -658,7 +653,7 @@
 	$$\vert\nu\vert \propto \sigma\sqrt{\frac{\vert \int da\vert}{V}},$$
 	where $\sigma$ is the typical variance of returns and $V$ is the typical volume over the period.
 
-	Gatheral (2016) derives this from a variety of different models of market impact. Execution strategies are discussed here and in Johnson (2010).%Algorithmic trading and DMA
+	Gatheral (2016) derives this from a variety of different models of market impact. Execution strategies are discussed here and in Johnson (2010).
 
 	Most reasonable market impact models are said not to admit price manipulation, in the sense that if $a_{t_-}=a_{t_+}=0$, our P\&L from price impact cannot be positive.
 \end{frame}
@@ -900,7 +895,7 @@
 
 	If all investors hold a fixed optimal portfolio $w*$, the total dollar value invested in each asset will be proportional to $w^*$.
 
-	However, most assets give their holder the right to potential future cashflows (`dividends'). %Exercise: find a counterexample
+	However, most assets give their holder the right to potential future cashflows (`dividends'). 
 	These dividends are affected by things in the real world, which we can improve our forecast of over time.
 
 	If market participants are generally good at forecasting dividends, prices will reflect dividend expectations.\footnote{The result of price impact is to make such forecasts a public good, in the microeconomic sense.}
@@ -1017,7 +1012,6 @@
 	$$L \overline{F} \cdot \beta - \frac{1}{2n}\beta^\top F^\top F\beta,$$
 	and the optimal $\beta$ is given by
 	$$L\left(\frac{1}{n}F^\top F\right)^{-1}\overline{F}.$$
-	%Exercise: extend to multiple assets, each with various forecasts
 \end{frame}
 
 \begin{frame}{Sharpe Ratio Hypothesis Testing (In-Sample)}
@@ -1059,7 +1053,6 @@
 	and the optimal $\beta$ is given by
 	$$\beta = L\left(\frac{2L\pi^2}{n} dX^\top \Lambda dX + \frac{1}{n}F^\top F\right)^{-1}\overline{F}.$$
 	Note that as $\pi\to\infty$ we have $\beta\to 0$.
-		%Why ASX200 and not all ords (microstructure)
 
 	More sophisticated execution can be achieved with techniques like reinforcement learning.
 \end{frame}
@@ -1071,8 +1064,10 @@
 
 	We can apply a Kalman filter to forecast $r_i$ (see appendix). Over the interval $(t_i,t_{i+1}]$, we will hold a portfolio
 	$$w = L(\Theta_1 P^\epsilon_i \Theta_1 + B\Sigma_f B^\top + \Theta_0^2)^{-1} \Theta_1\hat{\epsilon}_i,$$
-	where $\hat{\epsilon}_i$ is the filtered value of $\epsilon_i$ and $P^\epsilon_i$ is the uncertainty matrix of the filtering.
+	where $\hat{\epsilon}_i$ is the filtered value of $\epsilon_i$ and $P^\epsilon_i$ is the uncertainty matrix of the filtered value. Parameters can be fit using an EM algorithm.
+\end{frame}
 
+\begin{frame}{Asymptotic Filtering}
 	As the number of assets $p\to\infty$, we will be able to infer $f_i$ exactly.
 
 	The residual returns $r_i-Bf_i = \Theta_0\epsilon_i + \Theta_1 \epsilon_{i-1}$ follow an independent $MA(1)$ process for each asset. We can filter $\epsilon_i$\footnote{Assuming invertibility} as
@@ -1080,7 +1075,7 @@
 	and finally
 	$$\mathbb{E}[r_{i+1}] \approx \Theta_1\Theta_0^-1 \sum_{j=0}^n \left(-\Theta_1\Theta_0^{-1}\right)^j(r_{i-j}-Bf_{i-j}).$$
 
-	This is almost entirely orthogonal to $B$.
+	Since this is an autoregression on residual returns, it is almost entirely orthogonal to $B$.
 \end{frame}
 
 \begin{frame}{Summary}
@@ -1149,7 +1144,9 @@
 	$$P_i = \left[\begin{matrix}P^f_i&\ldots&\ldots\\\ldots&P^\epsilon_i&\ldots\\\ldots&\ldots&P^\epsilon_{i-1}\end{matrix}\right].$$
 	Initialise $\hat{x}_i$ to zero and $P_i$ to 
 	$$\left[\begin{matrix}0 & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right].$$
+\end{frame}
 
+\begin{frame}{Observation and Transition}
 	We have $r_i = Hx_i$, where
 	$$H = \left[\begin{matrix}B & \Theta_0 & \Theta_1\end{matrix}\right]$$
 
@@ -1158,7 +1155,9 @@
 	and the innovation covariance is
 	$$Q = \left[\begin{matrix}\Sigma_f & 0 & 0 \\ 0 & I & 0 \\ 0 & 0 & 0\end{matrix}\right],$$
 	and so $x_i = Fx_{i-1} + Q\varepsilon_i$, where $\varepsilon$ is multivariate normal.
+\end{frame}
 
+\begin{frame}{Filtering Solution}
 	Defining
 	\begin{align*}
 	\\	y				&= r_i - \Theta_1 \hat{\epsilon}_{i-1}
@@ -1167,8 +1166,8 @@
 	\end{align*}
 	we then have
 	\begin{align*}
-		\hat{\epsilon}_i&= \Theta_0 S^{-1} y
-	\\	P_i		&= (I-KH) (F P_{i-1} F^\top + Q) (I-KH)^\top = (I-KH) (F P_{i-1} F^\top + Q) (I-KH)^\top.
+		\hat{\epsilon}_i&= \Theta_0 S^{-1} y,
+	\\	P_i		&= (I-KH) (F P_{i-1} F^\top + Q) (I-KH)^\top.
 	\end{align*}
 	Finally, our forecast for $r_{i+1}$ is $\Theta_1\hat{\epsilon}_i$, and our forecast for the covariance of $r_{i+1}$ is $\Theta_1 P^\epsilon_i \Theta_1 + B\Sigma_f B^\top+\Theta_0^2$.
 
@@ -1205,13 +1204,10 @@
 	\end{block}
 
 	An arbitrage strategy on Arrow-Debreu securities is sometimes called a \textbf{Dutch Book}, and properties derived from arbitrage-freeness are known as \textbf{Dutch Book Theorems}.
-
-	%Exercise: extend this reasoning to deal with spreads
-	%Exercise: justify Bayes rule
 \end{frame}
 
 \begin{frame}{Fundamental Theorem of Asset Pricing}
-	The market for Arrow-Debreu securities is arbitrage-free if and only if $\mathbb{Q}_{t'}(\cdot)$ obeys the axioms of Kolmogorov (1950), i.e. is a \textbf{probability measure} on $\mathcal{F}_t$.%Kolmogorov (1950)
+	The market for Arrow-Debreu securities is arbitrage-free if and only if $\mathbb{Q}_{t'}(\cdot)$ obeys the axioms of Kolmogorov (1950), i.e. is a \textbf{probability measure} on $\mathcal{F}_t$.
 
 	In general, we can consider securities that are redeemable at time $t$ for some amount given by a $\mathcal{F}_t$-measurable function (\textbf{random variable}) $S$.
 
@@ -1258,7 +1254,66 @@
 	Historical data may also have been corrected, redacted, or unredacted after its initial publication.
 \end{frame}
 
+\section{Appendix: Exercises}
+\begin{frame}{Exercises}
+	\begin{enumerate}
+		\item We have assumed that there is a distinction between assets and money. For what asset classes is this not so clear?
+		\item What kind of data structures might make sense for representing a limit order book?
+		\item For a given pair of bid-ask spreads not in cross, what prices do our passive orders need to be at to allow us a cross-listing arbitrage if they are matched against?
+		\item Assume the bid-ask spread is fixed. Show that if we sample the last traded price at regular intervals, the first difference of this time series must have negative serial autocorrelation. (This is called the Roll model)
+		\item Extend the signal aggregation framework to handle multiple assets, each with its own set of forecasts.
+	\end{enumerate}
+\end{frame}
+\begin{frame}{Exercises}
+	\begin{enumerate}
+		\setcounter{enumi}{5}
+		\item Why might we decide to use the top 200-500 stocks weighted by market cap to compute the general market return instead of all stocks?
+		\item Are there assets that have no potential for dividends (i.e. the asset can't entitle its holder a claim to some future cashflow)?
+		\item Give an asset pricing theoretic justification (see appendix) for Bayes' theorem
+		\item Extend the Dutch Book Theorems (see appendix) to handle a nonnegligible bid-ask spread
+	\end{enumerate}
+\end{frame}
+
 \section{Bibliography}
-\begin{frame}{Bibliography}
+\begin{frame}{Useful}
+	\begin{itemize}
+		\item \textit{Active Portfolio Management}, Grinold and Kahn, 1994
+		\item \textit{Time Series Analysis}, Hamilton, 1994
+		\item \textit{Maximum Likelihood from Incomplete Data via the EM Algorithm}, Dempster et. al., 1977
+		\item \textit{Probabilistic Principal Component Analysis}, Tipping and Bishop, 1999
+		\item \textit{Empirical Market Microstructure}, Hasbrouck, 2006
+		\item \textit{High-frequency Trading in a Limit Order Book}, Avellaneda and Stoikov, 2008
+		\item \textit{Elements of Statistical Learning}, Hastie et. al., 2009 (2nd ed.)
+		\item \textit{Algorithmic trading and DMA}, Johnson, 2010
+		\item \textit{Three Models of Market Impact}, Gatheral, 2016
+		\item \textit{Trades, Quotes and Prices}, Bouchaud et. al., 2018
+		\item \textit{Advanges in Active Portfolio Management}, Grinold and Kahn, 2019
+		\item \textit{Exponential Bounds for Regularised Hotelling's T2 Statistic in High Dimension}, Bertail and Gautherat, 2024
+		\item \textit{Elements of Quantitative Investing}, Paleologo, 2025
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Classics \& Mentioned}
+	\begin{itemize}
+		\item \textit{Truth and Probability}, Ramsey, 1926
+		\item \textit{Theory of Games and Economic Behaviour}, Von Neumann and Morgenstern, 1947
+		\item \textit{Foundations of the Theory of Probability}, Kolmogorov, 1950
+		\item \textit{Portfolio Selection}, Markowitz, 1952
+		\item \textit{Existence of an Equilibrium for a Competitive Economy}, Arrow and Debreu, 1954
+		\item \textit{A New Interpretation of Information Rate}, Kelly, 1956
+		\item \textit{A New Approach to Linear Filtering and Prediction Problems}, Kalman, 1960
+		\item \textit{Market Value, Time, and Risk}, Treynor, 1961
+	\end{itemize}
+\end{frame}
+\begin{frame}{Classics \& Mentioned}
+	\begin{itemize}
+		\item \textit{Solution of Incorrectly Formulated Problems and the Regularisation Method}, Tikhonov, 1963
+		\item \textit{Mutual Fund Performance}, Sharpe, 1966
+		\item \textit{Risk, Return and Equilibrium: Empirical Tests}, Fama and MacBeth, 1973
+		\item \textit{Martingales and Arbitrage in Multiperiod Securities Markets}, Harrison and Kreps, 1979
+		\item \textit{On The Impossibility of Informationally Efficient Markets}, Grossman and Stiglitz, 1980
+		\item \textit{Multivariate Adaptive Regression Splines}, Friedman, 1991
+		\item \textit{Illiquidity and Stock Returns: Cross-Section and Time-Series Effects}, Amihud, 2002
+	\end{itemize}
 \end{frame}
 \end{document}
